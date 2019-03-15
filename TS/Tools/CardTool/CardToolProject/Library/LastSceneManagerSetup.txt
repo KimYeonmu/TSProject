@@ -1,0 +1,4 @@
+sceneSetups:
+- path: Assets/ToolScene.unity
+  isLoaded: 1
+  isActive: 1
