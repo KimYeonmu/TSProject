@@ -12,7 +12,7 @@ public class ShapeSystem : SingletonBase<ShapeSystem>
 
     private Shape[] _shapes = new Shape[Enum.GetNames(typeof(ShapeTag)).Length];
 
-    public float ShapePosition = 7;
+    public float ShapePosition = 1;
 
     private void Awake()
     {
@@ -22,7 +22,7 @@ public class ShapeSystem : SingletonBase<ShapeSystem>
 
         foreach (var shape in (ShapeTag[]) Enum.GetValues(typeof(ShapeTag)))
         {
-            _shapes[(int)shape] = ResourceManager.Load("Prefabs/Object/CardShape").GetComponent<Shape>();
+            _shapes[(int)shape] = ResourceManager.GetInstance().Load("Prefabs/Object/CardShape").GetComponent<Shape>();
             _shapes[(int)shape].SetShapeIndex((int)shape);
         }
     }
@@ -32,7 +32,7 @@ public class ShapeSystem : SingletonBase<ShapeSystem>
         int cardIndex = (int)card.GetCardIndex() / 10;
         int shapeSpriteIndex = GetShapeSpriteIndex((int)card.GetCardIndex(),shapeIndex);
         int posIndex = cardIndex > 10 ? 0 : cardIndex - 1;
-        int nShapes = cardIndex > 10 ? 0 : cardIndex;
+        int nShapes = cardIndex > 10 ? 1 : cardIndex;
 
         for (var i = 0; i < nShapes; i++)
         {
@@ -55,9 +55,7 @@ public class ShapeSystem : SingletonBase<ShapeSystem>
 
         for (var i = 0; i < 2; i++)
         {
-            Shape shapeSide = card.gameObject.AddComponent<Shape>();
-            //shapeSide.SetShapePos((int)ShapePosTag.SideLeft + i);
-            shapeSide.SetShapeIndex(shapeIndex);
+            var shapeSide = Instantiate(_shapes[shapeIndex]);
             shapeSide.SetParent(card.gameObject.transform);
             shapeSide.SetScale(vScale);
             shapeSide.SetPosition(ShapePos[(int)ShapePosTag.SideLeft + i] * ShapePosition);

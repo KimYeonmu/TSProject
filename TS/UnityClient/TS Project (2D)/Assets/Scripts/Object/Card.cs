@@ -21,12 +21,9 @@ public class Card : IObject
         base.Awake();
 
         gameObject.name = "Card";
-        gameObject.layer = 8;
-        gameObject.tag = "Card";
 
-        _data = gameObject.AddComponent<CardData>();
-        _data.CardRenderer = gameObject.AddComponent<SpriteRenderer>();
-        _data.CardRenderer.sortingLayerName = "Card";
+        _data = GetComponent<CardData>();
+        _data.CardRenderer = GetComponent<SpriteRenderer>();
     }
 
     // Use this for initialization

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using DG.Tweening;
+using UniRx;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -33,6 +34,7 @@ public class PlayScene : IScene
         //        GameObject.Find("BackGround").GetComponent<SpriteRenderer>().sprite.bounds.size.x,
         //        GameObject.Find("BackGround").GetComponent<SpriteRenderer>().sprite.bounds.size.y));
 
+        
         _timeObjectX = TimeObject.rectTransform.sizeDelta.x;
 
         TimeObject.canvasRenderer.SetAlpha(0);
@@ -41,6 +43,15 @@ public class PlayScene : IScene
 
     void Start()
     {
+        CardSystem.GetInstance().AllCardMoveDeck(DeckSystem.GetInstance().GetDeck(DeckTag.ANIMATION_RIGHT_DECK));
+
+        Observable.Timer(TimeSpan.FromSeconds(1))
+            .Subscribe(_ => 
+            {
+                DeckSystem.GetInstance().AllMoveCardDecktoDeck(DeckTag.ANIMATION_RIGHT_DECK,DeckTag.DRAW_DECK,0.05f,3);
+
+            });
+
         StartCoroutine(StartScene());
     }
 
@@ -140,11 +151,9 @@ public class PlayScene : IScene
             PlayerSystem.GetInstance().Players[myPlayerIndex].SelectCard_Began(pos);
         }
 
-        // Debug.Log("No pressed");
         if (Input.GetMouseButton(0))
         {
             PlayerSystem.GetInstance().Players[myPlayerIndex].SelectCard_Moved(pos);
-            // Debug.Log("pressed");
         }
 
         if (Input.GetMouseButtonUp(0))
@@ -161,15 +170,9 @@ public class PlayScene : IScene
 
     public IEnumerator StartScene()
     {
-        yield return new WaitForSeconds(7);
+        yield return new WaitForSeconds(1);
 
-        CardSystem.GetInstance().SetCardActive(true);
-
-        DeckSystem.GetInstance().AllMoveCardDecktoDeck(
-            DeckTag.ANIMATION_RIGHT_DECK,
-            DeckTag.DRAW_DECK,
-            0.05f,
-            3);
+        
 
         //if (PlayerSystem.GetInstance().Players.Count <= 0)
         //{

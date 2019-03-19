@@ -10,10 +10,9 @@ public class CardText : IObject
     {
         base.Awake();
 
-        gameObject.name = "Text";
+        _text = GetComponent<TextData>();
 
-        _text = gameObject.AddComponent<TextData>();
-        
+        gameObject.name = "Text";
     }
 
     // Use this for initialization

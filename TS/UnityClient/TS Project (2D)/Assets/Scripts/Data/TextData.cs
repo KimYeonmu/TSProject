@@ -8,7 +8,7 @@ public class TextData : MonoBehaviour
     public void Awake()
     {
         TextRenderer = GetComponent<MeshRenderer>();
-        //TextRenderer.sortingLayerName = "Card";
+        TextRenderer.sortingLayerName = "Card";
 
         Text = GetComponent<TextMesh>();
     }

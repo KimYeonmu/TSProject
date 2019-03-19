@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 6646718265570199247}
   - component: {fileID: 5643320168431433642}
   - component: {fileID: 2080171189696066115}
+  - component: {fileID: 1185496415401039099}
   m_Layer: 0
   m_Name: CardShape
   m_TagString: Untagged
@@ -93,3 +94,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ObjTransform: {fileID: 0}
+--- !u!114 &1185496415401039099
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 672824886064176797}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0e78d5b16ffd42f428309f2999989afe, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ShapeRenderer: {fileID: 0}
+  ShapeIndex: 0

@@ -72,11 +72,12 @@ public class Deck : IObject
                     int i = (int)_;
                     moveDeck.AddCard(DeckList[i]);
 
-                    DeckList[i].ObjTransform.DOMove(Vector3.one*20, moveTime);
+                    DeckList[i].SetSortingOrder(i);
+                    DeckList[i].ObjTransform.DOMove(Vector3.zero, moveTime);
                     
-                    StartCoroutine(CardAnimationSystem.GetInstance().ReverseAnimation(
+                    CardAnimationSystem.GetInstance().ReverseAnimation(
                         DeckList[i],
-                        moveTime));
+                        moveTime);
                 },
                 (_ => { DeckList.Clear(); }));
     }
@@ -91,9 +92,9 @@ public class Deck : IObject
 
                 DeckList[DeckList.Count - 1].transform.DOMove(moveDeck.GetPosition(), moveTime);
 
-                StartCoroutine(CardAnimationSystem.GetInstance().ReverseAnimation(
+                CardAnimationSystem.GetInstance().ReverseAnimation(
                     DeckList[DeckList.Count - 1],
-                    moveTime));
+                    moveTime);
             },
                 (_ => { DeckList.RemoveAt(DeckList.Count - 1); }));
     }

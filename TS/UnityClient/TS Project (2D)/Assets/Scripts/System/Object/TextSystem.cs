@@ -10,7 +10,7 @@ public class TextSystem : SingletonBase<TextSystem>
 
     public void Awake()
     {
-        _textClone = ResourceManager.Load("Prefabs/Object/CardText").GetComponent<CardText>();
+        _textClone = ResourceManager.GetInstance().Load("Prefabs/Object/CardText").GetComponent<CardText>();
     }
 
     public void InitizlizeText(GameObject parentObject, string str)

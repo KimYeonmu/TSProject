@@ -169,7 +169,7 @@ public class Player : MonoBehaviour
     {
         for (int i = 0; i < PlayerCard.Count; i++)
         {
-            StartCoroutine(CardAnimationSystem.GetInstance().ReverseAnimation(PlayerCard[i], 3));
+            CardAnimationSystem.GetInstance().ReverseAnimation(PlayerCard[i], 3);
         }
     }
 
@@ -182,8 +182,8 @@ public class Player : MonoBehaviour
 
         if (isBack != PlayerCard[playerCardIndex].IsBack)
         {
-            StartCoroutine(CardAnimationSystem.GetInstance().ReverseAnimation(
-                PlayerCard[playerCardIndex], 4));
+            CardAnimationSystem.GetInstance().ReverseAnimation(
+                PlayerCard[playerCardIndex], 4);
         }
 
         putDeck.AddCard(PlayerCard[playerCardIndex]);

@@ -19,7 +19,7 @@ public class GameManager : SingletonBase<GameManager>
         CardSystem.GetInstance().AddAllCard();
         CardSystem.GetInstance().SetCardActive(true);
 
-        CardSystem.GetInstance().AllCardMoveDeck(DeckSystem.GetInstance().GetDeck(DeckTag.ANIMATION_RIGHT_DECK));
+        //CardSystem.GetInstance().AllCardMoveDeck(DeckSystem.GetInstance().GetDeck(DeckTag.ANIMATION_RIGHT_DECK));
     }
 
     public IEnumerator StartGame()

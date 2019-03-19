@@ -18,8 +18,11 @@ public class CardSystem : SingletonBase<CardSystem>
     private Vector3 JokerTextPos = new Vector3(3, -3, 0) * 0.3f;
     private Vector3 JokerTextScale = new Vector3(0.18f, 0.18f, 1) * 0.3f;
 
+    private Card _cardClone;
+
     void Awake()
     {
+        _cardClone = ResourceManager.GetInstance().Load("Prefabs/Object/Card").GetComponent<Card>();
     }
 
     // Use this for initialization
@@ -51,9 +54,7 @@ public class CardSystem : SingletonBase<CardSystem>
 
     public void CreateCard(int shapeIndex, int cardIndex)
     {
-        var obj = new GameObject("Card");
-        
-        Card card = obj.AddComponent<Card>();
+        var card = Instantiate(_cardClone);
         card.SetCardIndex((cardIndex + 1) * 10);
         card.SetBackgroundSprite(BackGroundSprite);
         card.SetBackCardSprite(BackCardSprite);
@@ -74,7 +75,6 @@ public class CardSystem : SingletonBase<CardSystem>
             TextSystem.GetInstance().AddCardText(card, JokerTextPos, JokerTextScale, -1);
         }
 
-        card.gameObject.AddComponent<BoxCollider2D>();
         card.SetScale(CardScale);
         card.SetSortingOrder(Cards.Count);
         card.gameObject.SetActive(false);
@@ -87,12 +87,11 @@ public class CardSystem : SingletonBase<CardSystem>
         Cards.Add(card);
     }
 
-
     public IEnumerator AllCardReverse()
     {
         for (int i = 0; i < Cards.Count; i++)
         {
-            StartCoroutine(CardAnimationSystem.GetInstance().ReverseAnimation(Cards[i],3));
+            CardAnimationSystem.GetInstance().ReverseAnimation(Cards[i],3);
         }
 
         yield return null;

@@ -41,10 +41,9 @@ public class PlayerSystem : SingletonBase<PlayerSystem>
                 {
                     if (i == MyPlayerIndex)
                     {
-                        StartCoroutine(
-                            CardAnimationSystem.GetInstance().ReverseAnimation(
+                        CardAnimationSystem.GetInstance().ReverseAnimation(
                                 DeckSystem.GetInstance().GetTopCardPeekWithDeck(DeckTag.DRAW_DECK),
-                                3));
+                                3);
                     }
 
                     Players[i].AddPlayerCard(DeckSystem.GetInstance().GetTopCardWithDeck(deckTag));

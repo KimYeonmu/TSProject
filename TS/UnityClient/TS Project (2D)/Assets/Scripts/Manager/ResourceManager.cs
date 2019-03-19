@@ -4,9 +4,14 @@ using UnityEngine;
 
 public class ResourceManager : SingletonBase<ResourceManager>
 {
-    public static GameObject Load(string path)
+    public Transform RootResourceObj;
+
+    public GameObject Load(string path)
     {
         var obj = Instantiate(Resources.Load(path)) as GameObject;
+
+        obj.transform.SetParent(RootResourceObj);
+        obj.transform.localPosition = Vector3.zero;
 
         if (obj == null)
             Debug.Log(path + "is can't found");

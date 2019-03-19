@@ -11,8 +11,7 @@ public class Shape : IObject
         base.Awake();
 
         gameObject.name = "Shape";
-
-        _data = gameObject.AddComponent<ShapeData>();
+        _data = GetComponent<ShapeData>();
     }
 
     // Use this for initialization
@@ -29,7 +28,6 @@ public class Shape : IObject
     {
         _data.ShapeIndex = (ShapeTag)shapeIndex;
     }
-
 
     public void SetShapeSprite(Sprite sprite)
     {

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using UniRx;
 using UnityEngine;
 
 public enum DeckTag
@@ -25,7 +26,9 @@ public class DeckSystem : SingletonBase<DeckSystem>
 
     public void CreateDeck(Vector3 pos)
     {
-        Deck deck = gameObject.AddComponent<Deck>();
+        var obj = new GameObject("Deck");
+
+        var deck = obj.AddComponent<Deck>();
         deck.SetParent(transform);
         deck.SetPosition(pos);
         deck.SetScale(Vector2.one);
@@ -48,20 +51,22 @@ public class DeckSystem : SingletonBase<DeckSystem>
         return Decks[(int) deckTag].GetTopCardPeek();
     }
 
-    public void AllMoveCardDecktoDeck(DeckTag deckTag1, DeckTag deckTag2, float intervalTime, float moveTime)
+    public void AllMoveCardDecktoDeck(DeckTag deckTag1, DeckTag deckTag2, float delayTime, float intervalTime, float moveTime)
     {
         int tag1 = (int)deckTag1;
         int tag2 = (int)deckTag2;
 
-        Decks[tag1].AllMoveCardDecktoDeck(Decks[tag2], intervalTime, moveTime);
+        Observable.Timer(TimeSpan.FromSeconds(delayTime))
+            .Subscribe(_ => Decks[tag1].AllMoveCardDecktoDeck(Decks[tag2], intervalTime, moveTime));
     }
 
-    public void MoveCardDecktoDeck(DeckTag deckTag1, DeckTag deckTag2, int cardNum, float intervalTime, float moveTime)
+    public void MoveCardDecktoDeck(DeckTag deckTag1, DeckTag deckTag2, float delayTime, int cardNum, float intervalTime, float moveTime)
     {
         int tag1 = (int)deckTag1;
         int tag2 = (int)deckTag2;
 
-        Decks[tag1].MoveCardDecktoDeck(Decks[tag2], cardNum, intervalTime, moveTime);
+        Observable.Timer(TimeSpan.FromSeconds(delayTime))
+            .Subscribe(_ => Decks[tag1].MoveCardDecktoDeck(Decks[tag2], cardNum, intervalTime, moveTime));
     }
 
     public void ShuffleDeck(DeckTag deckTag, int shuffleNum)

@@ -128,7 +128,6 @@ C:\Unity\Personal\TSProject\TS\UnityClient\TS Project (2D)\Temp\bin\Debug\UnityE
 C:\Unity\Personal\TSProject\TS\UnityClient\TS Project (2D)\Temp\bin\Debug\UnityEditor.dll
 C:\Unity\Personal\TSProject\TS\UnityClient\TS Project (2D)\Temp\bin\Debug\UnityEditor.GoogleAudioSpatializer.dll
 C:\Unity\Personal\TSProject\TS\UnityClient\TS Project (2D)\Temp\bin\Debug\UnityEditor.Graphs.dll
-C:\Unity\Personal\TSProject\TS\UnityClient\TS Project (2D)\Temp\bin\Debug\UnityEditor.iOS.Extensions.dll
 C:\Unity\Personal\TSProject\TS\UnityClient\TS Project (2D)\Temp\bin\Debug\UnityEditor.Networking.dll
 C:\Unity\Personal\TSProject\TS\UnityClient\TS Project (2D)\Temp\bin\Debug\UnityEditor.Purchasing.dll
 C:\Unity\Personal\TSProject\TS\UnityClient\TS Project (2D)\Temp\bin\Debug\UnityEditor.SpatialTracking.dll
@@ -213,7 +212,6 @@ C:\Unity\Personal\TSProject\TS\UnityClient\TS Project (2D)\Temp\bin\Debug\Unity.
 C:\Unity\Personal\TSProject\TS\UnityClient\TS Project (2D)\Temp\bin\Debug\Unity.UNetWeaver.dll
 C:\Unity\Personal\TSProject\TS\UnityClient\TS Project (2D)\Temp\bin\Debug\Unity.IvyParser.dll
 C:\Unity\Personal\TSProject\TS\UnityClient\TS Project (2D)\Temp\bin\Debug\UnityEditor.iOS.Extensions.Xcode.dll
-C:\Unity\Personal\TSProject\TS\UnityClient\TS Project (2D)\Temp\bin\Debug\UnityEditor.iOS.Extensions.Common.dll
 C:\Unity\Personal\TSProject\TS\UnityClient\TS Project (2D)\Temp\bin\Debug\SyntaxTree.VisualStudio.Unity.Messaging.dll
 C:\Unity\Personal\TSProject\TS\UnityClient\TS Project (2D)\Temp\bin\Debug\Unity.CecilTools.dll
 C:\Unity\Personal\TSProject\TS\UnityClient\TS Project (2D)\Temp\bin\Debug\Unity.Cecil.Pdb.dll
@@ -301,7 +299,6 @@ C:\Unity\Personal\TSProject\TS\UnityClient\TS Project (2D)\obj\Debug\UniRx.Async
 C:\Unity\Personal\TSProject\TS\UnityClient\TS Project (2D)\obj\Debug\UniRx.Async.csproj.CopyComplete
 C:\Unity\Personal\TSProject\TS\UnityClient\TS Project (2D)\obj\Debug\UniRx.Async.dll
 C:\Unity\Personal\TSProject\TS\UnityClient\TS Project (2D)\obj\Debug\UniRx.Async.pdb
-C:\Unity\Personal\TSProject\TS\UnityClient\TS Project (2D)\Temp\bin\Debug\Boo.Lang.dll
 C:\Users\연무\Desktop\Programming\Unity\TSProject\TS\UnityClient\TS Project (2D)\Temp\bin\Debug\UniRx.Async.dll
 C:\Users\연무\Desktop\Programming\Unity\TSProject\TS\UnityClient\TS Project (2D)\Temp\bin\Debug\UniRx.Async.pdb
 C:\Users\연무\Desktop\Programming\Unity\TSProject\TS\UnityClient\TS Project (2D)\Temp\bin\Debug\DOTween.dll
