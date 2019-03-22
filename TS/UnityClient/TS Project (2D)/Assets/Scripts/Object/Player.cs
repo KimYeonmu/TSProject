@@ -39,6 +39,8 @@ public class Player : MonoBehaviour
     {
     }
 
+    /// <summary>플레이어에 카드를 추가</summary>
+    /// <param name="card"></param>
     public void AddPlayerCard(Card card)
     {
         PlayerCard.Add(card);
@@ -46,9 +48,9 @@ public class Player : MonoBehaviour
         card.SetSortingOrder(PlayerCard.Count);
 
         if (PlayerCard.Count > 20)
-        {
             IsDie = true;
-        }
+
+        RePosition();
     }
 
     public void RePosition()
@@ -69,6 +71,11 @@ public class Player : MonoBehaviour
         Vector3 angle = Vector3.zero; // 카드의 각도
 
         float increaseAngle = 0; // 카드가 추가될때 증가되는 각도
+
+        //if (PlayerPlace == PlayerTag.PLAYER_BOTTOM)
+        //    minusDistance.x = screen.x / 24 * PlayerCard.Count / 2 - 1.2f;
+        //else
+        //    minusDistance.y
 
         switch (PlayerPlace)
         {
@@ -129,11 +136,14 @@ public class Player : MonoBehaviour
         for (int i = 0; i < PlayerCard.Count; i++)
         {
             screen = startPoint + cardDistance * i - minusDistance;
+
             screen += -Mathf.Sin(180 / PlayerCard.Count * i * Mathf.Deg2Rad) * increateDistance;
 
-            PlayerCard[i].transform.DOMove(screen, 1);
+            PlayerCard[i].transform.DOMove(screen, 0.5f);
 
-            PlayerCard[i].transform.DORotate(Vector3.forward * (i - PlayerCard.Count / 2) * increaseAngle + angle, 1);
+
+
+            PlayerCard[i].transform.DORotate(Vector3.forward * (i - PlayerCard.Count / 2) * increaseAngle + angle, 0.1f);
 
             PlayerCard[i].SetSortingOrder(i);
 
@@ -157,36 +167,37 @@ public class Player : MonoBehaviour
         }
     }
 
-    public void AllCardMoveDeck(Deck cardDeck, bool isReverse)
+    public void AllCardMoveDeck(Deck cardDeck, bool isReverse, float reverseTime)
     {
         for (int i = 0; i < PlayerCard.Count; i++)
         {
-            PutCard(cardDeck, i, isReverse);
+            PutCard(cardDeck, i, isReverse, reverseTime);
         }
     }
 
-    public void AllCardReverse()
+    public void AllCardReverse(float time)
     {
         for (int i = 0; i < PlayerCard.Count; i++)
         {
-            CardAnimationSystem.GetInstance().ReverseAnimation(PlayerCard[i], 3);
+            CardAnimationSystem.GetInstance().ReverseAnimation(PlayerCard[i], time);
         }
     }
 
-    public void PutCard(Deck putDeck, int playerCardIndex, bool isBack)
+    public void PutCard(Deck putDeck, int playerCardIndex, bool isBack, float reverseTime)
     {
-        BoxCollider2D temp = PlayerCard[playerCardIndex].gameObject.GetComponent<BoxCollider2D>();
+        //BoxCollider2D temp = PlayerCard[playerCardIndex].gameObject.GetComponent<BoxCollider2D>();
+        putDeck.AddCard(PlayerCard[playerCardIndex]);
 
-        PlayerCard[playerCardIndex].transform.DOMove(putDeck.GetPosition(), 0.5f);
-        PlayerCard[playerCardIndex].transform.DORotate(putDeck.GetRotation(), 0.5f);
+        PlayerCard[playerCardIndex].transform.DOMove(Vector3.zero, 0.5f);
+        PlayerCard[playerCardIndex].transform.DORotate(Vector3.zero, 0.5f);
 
         if (isBack != PlayerCard[playerCardIndex].IsBack)
         {
             CardAnimationSystem.GetInstance().ReverseAnimation(
-                PlayerCard[playerCardIndex], 4);
+                PlayerCard[playerCardIndex], reverseTime);
         }
 
-        putDeck.AddCard(PlayerCard[playerCardIndex]);
+        
         PlayerCard.RemoveAt(playerCardIndex);
 
         RePosition();
@@ -276,13 +287,14 @@ public class Player : MonoBehaviour
         if (IsHoldCard == true)
         {
             IsHoldCard = false;
- 
-            if (PlayerCard[HoldCardNum].GetPosition().y < -SceneSystem.GetInstance().ScreenSize.y * 0.4f ||
-                !DeckSystem.GetInstance().CompareCard(
-                DeckTag.PUT_DECK,
+
+            var isCompare = DeckSystem.GetInstance().CompareCard(DeckTag.PUT_DECK,
                 PlayerCard[HoldCardNum].GetShapeIndex(),
                 PlayerCard[HoldCardNum].GetCardIndex(),
-                IsPutCard))
+                IsPutCard);
+
+            if (PlayerCard[HoldCardNum].GetPosition().y < -SceneSystem.GetInstance().ScreenSize.y * 0.4f ||
+                !isCompare)
             {
                 RePosition();
                 ReScale();

@@ -130,7 +130,7 @@ public class NetworkSystem : SingletonBase<NetworkSystem>
         else if (text[0].Equals("PUT-CARD"))
         {
             int playerCardIndex = Convert.ToInt32(text[2]);
-            PlayerSystem.GetInstance().PlayerPutCard(DeckTag.PUT_DECK,text[1],playerCardIndex);
+            PlayerSystem.GetInstance().PlayerPutCard(DeckTag.PUT_DECK,text[1],playerCardIndex, 0.5f);
         }
         else if (text[0].Equals("NEXT-TURN"))
         {
@@ -145,6 +145,8 @@ public class NetworkSystem : SingletonBase<NetworkSystem>
 
     public void SendServer(string text)
     {
+        if (!IsConnect) return;
+
         try
         {
             if (socketTcp != null && socketTcp.Connected)
@@ -161,7 +163,6 @@ public class NetworkSystem : SingletonBase<NetworkSystem>
         catch (Exception e)
         {
             UnityEngine.Debug.Log("Send Error : " + e.Message);
-
             throw;
         }
     }

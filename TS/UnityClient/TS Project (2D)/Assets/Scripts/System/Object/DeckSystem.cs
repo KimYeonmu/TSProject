@@ -20,7 +20,7 @@ public class DeckSystem : SingletonBase<DeckSystem>
     void Awake()
     {
         CreateDeck(Vector2.up * 1.5f);
-        CreateDeck(Vector2.down * 0.4f);
+        CreateDeck(Vector2.down * 3.5f);
         CreateDeck(Vector2.right * 10);
     }
 

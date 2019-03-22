@@ -31,6 +31,7 @@ public class TestScene : IScene
         DeckSystem.GetInstance().AllMoveCardDecktoDeck(
             DeckTag.ANIMATION_RIGHT_DECK,
             DeckTag.DRAW_DECK,
+            3,
             0.05F,
             3);
     }

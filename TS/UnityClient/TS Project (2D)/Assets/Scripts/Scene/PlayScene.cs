@@ -29,12 +29,12 @@ public class PlayScene : IScene
         //SceneSystem.GetInstance().SetScenePos(new Vector2(0, -20));
         //SceneSystem.GetInstance().SetSceneScale(Vector2.zero);
 
-        //SceneSystem.GetInstance().SetScreenSize(
-        //    new Vector2(
-        //        GameObject.Find("BackGround").GetComponent<SpriteRenderer>().sprite.bounds.size.x,
-        //        GameObject.Find("BackGround").GetComponent<SpriteRenderer>().sprite.bounds.size.y));
+        var size = GameObject.FindWithTag("Background").GetComponent<SpriteRenderer>().sprite.bounds.size;
 
-        
+        SceneSystem.GetInstance().SetScreenSize(new Vector2(size.x, size.y));
+
+        Debug.Log(size);
+
         _timeObjectX = TimeObject.rectTransform.sizeDelta.x;
 
         TimeObject.canvasRenderer.SetAlpha(0);
@@ -48,8 +48,7 @@ public class PlayScene : IScene
         Observable.Timer(TimeSpan.FromSeconds(1))
             .Subscribe(_ => 
             {
-                DeckSystem.GetInstance().AllMoveCardDecktoDeck(DeckTag.ANIMATION_RIGHT_DECK,DeckTag.DRAW_DECK,0.05f,3);
-
+                
             });
 
         StartCoroutine(StartScene());
@@ -170,24 +169,24 @@ public class PlayScene : IScene
 
     public IEnumerator StartScene()
     {
-        yield return new WaitForSeconds(1);
+        DeckSystem.GetInstance().AllMoveCardDecktoDeck(DeckTag.ANIMATION_RIGHT_DECK, DeckTag.DRAW_DECK, 0, 0.05f, 0.5f);
 
-        
+        yield return new WaitForSeconds(5);
 
-        //if (PlayerSystem.GetInstance().Players.Count <= 0)
-        //{
-        //    PlayerSystem.GetInstance().AddPlayer(PlayerTag.PLAYER_BOTTOM, "1", false);
-        //    PlayerSystem.GetInstance().AddPlayer(PlayerTag.PLAYER_TOP, "2", false);
-        //    TurnSystem.GetInstance().SetFirstTurn("1");
-        //    SceneSystem.GetInstance().SceneEvent(SceneEventTag.SCENE_EVENT_OUT);
-        //    SceneSystem.GetInstance().SceneEvent(SceneEventTag.SCENE_EVENT_SCALE_DOWN);
-        //    NetworkSystem.GetInstance().SendServer("FIND-ROOM:" + "1");
-        //}
+        if (PlayerSystem.GetInstance().Players.Count <= 0)
+        {
+            PlayerSystem.GetInstance().AddPlayer(PlayerTag.PLAYER_BOTTOM, "1", false);
+            PlayerSystem.GetInstance().AddPlayer(PlayerTag.PLAYER_TOP, "2", false);
+            TurnSystem.GetInstance().SetFirstTurn("1");
+            //SceneSystem.GetInstance().SceneEvent(SceneEventTag.SCENE_EVENT_OUT);
+            //SceneSystem.GetInstance().SceneEvent(SceneEventTag.SCENE_EVENT_SCALE_DOWN);
+            //NetworkSystem.GetInstance().SendServer("FIND-ROOM:" + "1");
+        }
 
-        //yield return new WaitForSeconds(5);
+        yield return new WaitForSeconds(5);
 
 
-        //StartCoroutine(SetTurnDirection());
+        StartCoroutine(SetTurnDirection());
     }
 
     public IEnumerator SetTurnDirection()
@@ -200,11 +199,11 @@ public class PlayScene : IScene
 
         TurnSystem.GetInstance().DecideFirstTurn();
 
-        PlayerSystem.GetInstance().AllPlayerCardReverse();
+        PlayerSystem.GetInstance().AllPlayerCardReverse(0.5f);
 
         yield return new WaitForSeconds(2);
 
-        PlayerSystem.GetInstance().AllPlayerCardMoveDeck(DeckTag.DRAW_DECK, true);
+        PlayerSystem.GetInstance().AllPlayerCardMoveDeck(DeckTag.DRAW_DECK, true, 0.5f);
 
         yield return new WaitForSeconds(2);
 

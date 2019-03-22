@@ -47,9 +47,6 @@ public class PlayerSystem : SingletonBase<PlayerSystem>
                     }
 
                     Players[i].AddPlayerCard(DeckSystem.GetInstance().GetTopCardWithDeck(deckTag));
-                    Players[i].RePosition();
-
-
 
                     yield return delay;
                 }
@@ -57,7 +54,7 @@ public class PlayerSystem : SingletonBase<PlayerSystem>
         }
     }
 
-    public void PlayerPutCard(DeckTag deckTag, string playerName, int cardListIndex)
+    public void PlayerPutCard(DeckTag deckTag, string playerName, int cardListIndex, float reverseTime)
     {
         for (int i = 0; i < Players.Count; i++)
         {
@@ -68,36 +65,39 @@ public class PlayerSystem : SingletonBase<PlayerSystem>
                 Players[i].PutCard(
                     DeckSystem.GetInstance().GetDeck(deckTag),
                     cardListIndex,
-                    false);
+                    false,
+                    reverseTime);
             }
         }
     }
 
-    public void PlayerCardReverse(int playerIndex)
+    public void PlayerCardReverse(int playerIndex, float reverseTime)
     {
-        Players[playerIndex].AllCardReverse();
+        Players[playerIndex].AllCardReverse(reverseTime);
     }
 
-    public void AllPlayerCardReverse()
+    public void AllPlayerCardReverse(float reverseTime)
     {
         for (int i = 0; i < Players.Count; i++)
-            Players[i].AllCardReverse();
+            Players[i].AllCardReverse(reverseTime);
     }
 
-    public void PlayerCardMoveDeck(DeckTag deckTag, int playerIndex, bool isReverse)
+    public void PlayerCardMoveDeck(DeckTag deckTag, int playerIndex, bool isReverse, float reverseTime)
     {
         Players[playerIndex].AllCardMoveDeck(
             DeckSystem.GetInstance().GetDeck(deckTag),
-            isReverse);
+            isReverse,
+            reverseTime);
     }
 
-    public void AllPlayerCardMoveDeck(DeckTag deckTag, bool isReverse)
+    public void AllPlayerCardMoveDeck(DeckTag deckTag, bool isReverse, float reverseTime)
     {
         for (int i = 0; i < Players.Count; i++)
         {
             Players[i].AllCardMoveDeck(
                 DeckSystem.GetInstance().GetDeck(deckTag),
-                isReverse);
+                isReverse,
+                reverseTime);
         }
     }
 
@@ -117,10 +117,9 @@ public class PlayerSystem : SingletonBase<PlayerSystem>
                     tempTurn -= Players.Count;
 
                 Players[tempTurn + i].AddPlayerCard(card);
-                Players[tempTurn + i].RePosition();
-            }
 
-            yield return delay;
+                yield return delay;
+            }
         }
     }
 }

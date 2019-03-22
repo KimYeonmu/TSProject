@@ -13,7 +13,7 @@ public class IObject : MonoBehaviour
 
     #region Setter
 
-    public void SetParent(Transform trans){ObjTransform.parent = trans;}
+    public void SetParent(Transform parent){ObjTransform.parent = parent; }
 
     public void SetReverse()
     {
