@@ -13,11 +13,8 @@ public class PlayScene : IScene
     public GameObject ChatBtnObject;
     public GameObject ChatImgObject;
 
-    public Image TimeObject;
-    public Image TimeBackObject;
-
     public bool IsChatBtnClick = false;
-    private float _timeObjectX;
+    
     private bool _isShowBtn = false;
 
     public override void Awake()
@@ -35,10 +32,7 @@ public class PlayScene : IScene
 
         Debug.Log(size);
 
-        _timeObjectX = TimeObject.rectTransform.sizeDelta.x;
-
-        TimeObject.canvasRenderer.SetAlpha(0);
-        TimeBackObject.canvasRenderer.SetAlpha(0);
+        
     }
 
     void Start()
@@ -62,51 +56,6 @@ public class PlayScene : IScene
         {
             TouchUpdate();
             TurnUpdate();
-        }
-
-        if (TurnSystem.GetInstance().IsShowTimeBar == true)
-        {
-            if (_isShowBtn == false)
-            {
-                TimeBackObject.CrossFadeAlpha(0.6f, 2, false);
-
-                TimeObject.CrossFadeAlpha(1, 2, false);
-
-                TimeBackObject.transform.DOMove(
-                    new Vector3(
-                        TimeBackObject.transform.localPosition.x,
-                        TimeBackObject.transform.localPosition.y + 30), 1);
-
-                TimeObject.transform.DOMove(
-                    new Vector3(
-                        TimeObject.transform.localPosition.x,
-                        TimeObject.transform.localPosition.y + 30), 1);
-
-                _isShowBtn = true;
-            }
-
-            RectTransform r = TimeObject.GetComponent<RectTransform>();
-
-            r.sizeDelta = new Vector2(_timeObjectX *
-                                      TurnSystem.GetInstance().TurnNowTime /
-                                      TurnSystem.GetInstance().TurnShowTime, r.sizeDelta.y);
-        }
-        else
-        {
-            if (_isShowBtn == true)
-            {
-                TimeBackObject.CrossFadeAlpha(0, 1, false);
-
-                TimeObject.CrossFadeAlpha(0, 1, false);
-
-                TimeBackObject.transform.DOScale(new Vector3(
-                    TimeBackObject.transform.localScale.x + 5, TimeBackObject.transform.localScale.y + 5), 0.5f);
-
-                TimeObject.transform.DOScale(new Vector3(
-                    TimeObject.transform.localScale.x + 5, TimeObject.transform.localScale.y + 5), 0.5f);
-
-                _isShowBtn = false;
-            }
         }
     }
 
@@ -176,15 +125,12 @@ public class PlayScene : IScene
         if (PlayerSystem.GetInstance().Players.Count <= 0)
         {
             PlayerSystem.GetInstance().AddPlayer(PlayerTag.PLAYER_BOTTOM, "1", false);
-            PlayerSystem.GetInstance().AddPlayer(PlayerTag.PLAYER_TOP, "2", false);
+            PlayerSystem.GetInstance().AddPlayer(PlayerTag.PLAYER_TOP, "2", true);
             TurnSystem.GetInstance().SetFirstTurn("1");
             //SceneSystem.GetInstance().SceneEvent(SceneEventTag.SCENE_EVENT_OUT);
             //SceneSystem.GetInstance().SceneEvent(SceneEventTag.SCENE_EVENT_SCALE_DOWN);
             //NetworkSystem.GetInstance().SendServer("FIND-ROOM:" + "1");
         }
-
-        yield return new WaitForSeconds(5);
-
 
         StartCoroutine(SetTurnDirection());
     }

@@ -83,7 +83,7 @@ public class Player : MonoBehaviour
                 {
                     cardDistance.x = 0.44f;
                     minusDistance.x = screen.x / 24 * PlayerCard.Count / 2 - 1.2f;
-                    startPoint = new Vector2(-0.84f, -8);
+                    startPoint = new Vector2(-0.84f, -7.5f);
                 }
                 break;
 
@@ -141,8 +141,6 @@ public class Player : MonoBehaviour
 
             PlayerCard[i].transform.DOMove(screen, 0.5f);
 
-
-
             PlayerCard[i].transform.DORotate(Vector3.forward * (i - PlayerCard.Count / 2) * increaseAngle + angle, 0.1f);
 
             PlayerCard[i].SetSortingOrder(i);
@@ -169,9 +167,11 @@ public class Player : MonoBehaviour
 
     public void AllCardMoveDeck(Deck cardDeck, bool isReverse, float reverseTime)
     {
-        for (int i = 0; i < PlayerCard.Count; i++)
+        int count = PlayerCard.Count;
+
+        for (int i = 0; i < count; i++)
         {
-            PutCard(cardDeck, i, isReverse, reverseTime);
+            PutCard(cardDeck, 0, isReverse, reverseTime);
         }
     }
 
@@ -183,9 +183,8 @@ public class Player : MonoBehaviour
         }
     }
 
-    public void PutCard(Deck putDeck, int playerCardIndex, bool isBack, float reverseTime)
+    public void PutCard(Deck putDeck, int playerCardIndex, bool isBack = false, float reverseTime = 0.5f)
     {
-        //BoxCollider2D temp = PlayerCard[playerCardIndex].gameObject.GetComponent<BoxCollider2D>();
         putDeck.AddCard(PlayerCard[playerCardIndex]);
 
         PlayerCard[playerCardIndex].transform.DOMove(Vector3.zero, 0.5f);
@@ -201,6 +200,8 @@ public class Player : MonoBehaviour
         PlayerCard.RemoveAt(playerCardIndex);
 
         RePosition();
+
+        NetworkSystem.GetInstance().SendServer(string.Format("PUT-CARD:{0}:{1}", PlayerId, playerCardIndex));
     }
 
     public void EndTurn()
@@ -225,7 +226,7 @@ public class Player : MonoBehaviour
             if (collider.OverlapPoint(touchPos))
             {
                 PlayerCard[i].SetScale(Vector2.one * 1.2f);
-                PlayerCard[i].SetPosition(CardPositionList[i] + Vector2.up * 1);
+                PlayerCard[i].SetPosition(CardPositionList[i]);
                 break;
             }
         }
@@ -235,10 +236,7 @@ public class Player : MonoBehaviour
     {
         BoxCollider2D collider2D;
 
-        Vector2 vc;
-
-        vc.x = touchPos.x * SceneSystem.GetInstance().ScreenSize.x / SceneSystem.GetInstance().ScreenPoint.x;
-        vc.y = touchPos.y * SceneSystem.GetInstance().ScreenSize.y / SceneSystem.GetInstance().ScreenPoint.y;
+        Vector2 vc = touchPos;
 
         if (IsHoldCard == true)
         {
@@ -253,14 +251,14 @@ public class Player : MonoBehaviour
             if (collider2D.OverlapPoint(touchPos))
             {
                 PlayerCard[i].SetScale(Vector2.one * 1.2f);
-                PlayerCard[i].SetPosition(CardPositionList[i] + Vector2.up * 1);
+                //PlayerCard[i].SetPosition(CardPositionList[i] + Vector2.up * 1);
 
                 if (touchPos.y > -SceneSystem.GetInstance().ScreenWorldPoint.y / 1.3f)
                 {
                     HoldCardNum = i;
                     IsHoldCard = true;
 
-                    PlayerCard[HoldCardNum].transform.DOScale(Vector3.one, 2);
+                    PlayerCard[HoldCardNum].transform.DOScale(Vector3.one, 0.5f);
 
                     PlayerCard[i].SetPosition(vc + Vector2.down * 1.5f);
                     PlayerCard[i].SetSortingOrder(100);
@@ -298,12 +296,13 @@ public class Player : MonoBehaviour
             {
                 RePosition();
                 ReScale();
-                return;
             }
-
-            IsPutCard = true;
-            PlayerCard[HoldCardNum].SetSortingOrder(HoldCardNum + 1);
-            NetworkSystem.GetInstance().SendServer(string.Format("PUT-CARD:{0}:{1}", PlayerId, HoldCardNum));
+            else
+            {
+                IsPutCard = true;
+                PlayerCard[HoldCardNum].SetSortingOrder(HoldCardNum + 1);
+                PutCard(DeckSystem.GetInstance().GetDeck(DeckTag.PUT_DECK),HoldCardNum);
+            }
         }
     }
 }

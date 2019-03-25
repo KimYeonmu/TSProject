@@ -3,7 +3,11 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using DG.Tweening;
+using UniRx;
+using UniRx.Triggers;
 using UnityEngine;
+using UnityEngine.UI;
 
 
 public class TurnSystem : SingletonBase<TurnSystem>
@@ -14,12 +18,60 @@ public class TurnSystem : SingletonBase<TurnSystem>
 
     public float TurnTimeOut = 30;
     public float TurnNowTime;
-    public float TurnShowTime = 15;
-    public bool IsShowTimeBar = false;
+    public float TurnShowTime = 7;
+    public BoolReactiveProperty IsShowTimeBar = new BoolReactiveProperty(false);
+
+    public Image TimeObject;
+    public Image TimeBackObject;
+
+    private float _timeObjectX;
 
     public void Start()
     {
+        _timeObjectX = TimeObject.rectTransform.sizeDelta.x;
 
+        TimeObject.canvasRenderer.SetAlpha(0);
+        TimeBackObject.canvasRenderer.SetAlpha(0);
+
+        IsShowTimeBar.Subscribe(value =>
+        {
+            if (value)
+            {
+                TimeBackObject.CrossFadeAlpha(0.6f, 2, false);
+                TimeObject.CrossFadeAlpha(1, 2, false);
+
+                var pos = TimeBackObject.transform.position;
+                TimeBackObject.transform.DOMove(new Vector3(pos.x,pos.y + 30), 1);
+
+                pos = TimeObject.transform.position;
+                TimeObject.transform.DOMove(new Vector3(pos.x,pos.y + 30), 1);
+            }
+            else
+            {
+                TimeBackObject.CrossFadeAlpha(0, 1, false);
+                TimeObject.CrossFadeAlpha(0, 1, false);
+
+                TimeBackObject.transform.DOScale(TimeBackObject.transform.localScale * 2, 0.5f);
+                TimeObject.transform.DOScale(TimeObject.transform.localScale * 2, 0.5f)
+                    .OnComplete(() =>
+                    {
+                        TimeBackObject.transform.Translate(0, -30, 0);
+                        TimeObject.transform.Translate(0, -30, 0);
+
+                        TimeBackObject.transform.localScale /= 2;
+                        TimeObject.transform.localScale /= 2;
+                    });
+            }
+        });
+
+        this.UpdateAsObservable().Subscribe(_ =>
+        {
+            var r = TimeObject.rectTransform;
+            var scale = TurnNowTime / TurnShowTime;
+
+            r.sizeDelta = new Vector2(_timeObjectX * scale, r.sizeDelta.y);
+        });
+        
     }
 
     public void AddTurnPlayer(string playerName)
@@ -55,14 +107,15 @@ public class TurnSystem : SingletonBase<TurnSystem>
 
             if (TurnNowTime < TurnShowTime)
             {
-                IsShowTimeBar = true;
+                IsShowTimeBar.Value = true;
             }
 
             yield return null;
         }
 
-        IsShowTimeBar = false;
+        IsShowTimeBar.Value = false;
         TurnNowTime = TurnTimeOut;
+
         NextTurn();
     }
 

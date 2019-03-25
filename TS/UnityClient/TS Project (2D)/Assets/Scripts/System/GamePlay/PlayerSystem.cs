@@ -54,7 +54,7 @@ public class PlayerSystem : SingletonBase<PlayerSystem>
         }
     }
 
-    public void PlayerPutCard(DeckTag deckTag, string playerName, int cardListIndex, float reverseTime)
+    public void PlayerPutCard(DeckTag deckTag, string playerName, int cardListIndex, float reverseTime = 0.5f)
     {
         for (int i = 0; i < Players.Count; i++)
         {
