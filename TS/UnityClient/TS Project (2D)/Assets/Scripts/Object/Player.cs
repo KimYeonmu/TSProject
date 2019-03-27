@@ -83,7 +83,7 @@ public class Player : MonoBehaviour
                 {
                     cardDistance.x = 0.44f;
                     minusDistance.x = screen.x / 24 * PlayerCard.Count / 2 - 1.2f;
-                    startPoint = new Vector2(-0.84f, -7.5f);
+                    startPoint = new Vector2(-0.84f, -7.8f);
                 }
                 break;
 
@@ -130,8 +130,6 @@ public class Player : MonoBehaviour
                 break;
         }
 
-        startPoint -= new Vector2(PlayerCard[0].GetParent().localPosition.x,
-            PlayerCard[0].GetParent().localPosition.y);
 
         for (int i = 0; i < PlayerCard.Count; i++)
         {
@@ -165,7 +163,7 @@ public class Player : MonoBehaviour
         }
     }
 
-    public void AllCardMoveDeck(Deck cardDeck, bool isReverse, float reverseTime)
+    public void AllCardMoveDeck(DeckTag cardDeck, bool isReverse, float reverseTime)
     {
         int count = PlayerCard.Count;
 
@@ -183,12 +181,12 @@ public class Player : MonoBehaviour
         }
     }
 
-    public void PutCard(Deck putDeck, int playerCardIndex, bool isBack = false, float reverseTime = 0.5f)
+    public void PutCard(DeckTag putDeck, int playerCardIndex, bool isBack = false, float reverseTime = 0.5f)
     {
-        putDeck.AddCard(PlayerCard[playerCardIndex]);
+        var deck = DeckSystem.GetInstance().GetDeck(putDeck);
 
-        PlayerCard[playerCardIndex].transform.DOMove(Vector3.zero, 0.5f);
-        PlayerCard[playerCardIndex].transform.DORotate(Vector3.zero, 0.5f);
+        PlayerCard[playerCardIndex].transform.DOMove(deck.GetPosition(), 0.5f);
+        PlayerCard[playerCardIndex].transform.DORotate(deck.GetAngle(), 0.5f);
 
         if (isBack != PlayerCard[playerCardIndex].IsBack)
         {
@@ -196,7 +194,8 @@ public class Player : MonoBehaviour
                 PlayerCard[playerCardIndex], reverseTime);
         }
 
-        
+        deck.AddCard(PlayerCard[playerCardIndex]);
+
         PlayerCard.RemoveAt(playerCardIndex);
 
         RePosition();
@@ -301,7 +300,7 @@ public class Player : MonoBehaviour
             {
                 IsPutCard = true;
                 PlayerCard[HoldCardNum].SetSortingOrder(HoldCardNum + 1);
-                PutCard(DeckSystem.GetInstance().GetDeck(DeckTag.PUT_DECK),HoldCardNum);
+                PutCard(DeckTag.PUT_DECK,HoldCardNum);
             }
         }
     }

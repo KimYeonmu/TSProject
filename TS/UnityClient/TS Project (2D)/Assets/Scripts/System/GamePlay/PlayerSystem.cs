@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using UniRx;
 using UnityEngine;
 
 
@@ -29,46 +30,37 @@ public class PlayerSystem : SingletonBase<PlayerSystem>
         TurnSystem.GetInstance().AddTurnPlayer(id);
     }
 
-    public IEnumerator PlayerAddCard(DeckTag deckTag, string playerName, int cardNum)
+    public void PlayerAddCard(DeckTag deckTag, string playerName, int cardNum)
     {
-        WaitForSeconds delay = new WaitForSeconds(0.05f);
-
-        for (int i = 0; i < Players.Count; i++)
-        {
-            for (int j = 0; j < cardNum; j++)
+        Observable.Interval(TimeSpan.FromSeconds(0.05f))
+            .Take(cardNum)
+            .Subscribe(_ =>
             {
-                if (Players[i].PlayerId.Equals(playerName))
+                var player = Players.Where(p => p.PlayerId == playerName)
+                    .GetEnumerator().Current;
+
+                var card = DeckSystem.GetInstance().GetTopCardPeekWithDeck(DeckTag.DRAW_DECK);
+
+                if (player == null)
                 {
-                    if (i == MyPlayerIndex)
-                    {
-                        CardAnimationSystem.GetInstance().ReverseAnimation(
-                                DeckSystem.GetInstance().GetTopCardPeekWithDeck(DeckTag.DRAW_DECK),
-                                3);
-                    }
-
-                    Players[i].AddPlayerCard(DeckSystem.GetInstance().GetTopCardWithDeck(deckTag));
-
-                    yield return delay;
+                    Debug.Log("Player not found : " + playerName);
+                    return;
                 }
-            }
-        }
+
+                if (player.PlayerId == MyPlayerId)
+                    CardAnimationSystem.GetInstance().ReverseAnimation(card, 0.5f);
+
+                player.AddPlayerCard(card);
+            });
     }
 
     public void PlayerPutCard(DeckTag deckTag, string playerName, int cardListIndex, float reverseTime = 0.5f)
     {
-        for (int i = 0; i < Players.Count; i++)
-        {
-            if (Players[i].PlayerId.Equals(playerName))
-            {
-                AlertSystem.GetInstance().AddAlerts(Players[i].PlayerCard[cardListIndex]);
+        var player = Players.Where(p => p.PlayerId == playerName)
+            .GetEnumerator().Current;
 
-                Players[i].PutCard(
-                    DeckSystem.GetInstance().GetDeck(deckTag),
-                    cardListIndex,
-                    false,
-                    reverseTime);
-            }
-        }
+        AlertSystem.GetInstance().AddAlerts(player.PlayerCard[cardListIndex]);
+        player.PutCard(deckTag,cardListIndex,false,reverseTime);
     }
 
     public void PlayerCardReverse(int playerIndex, float reverseTime)
@@ -85,7 +77,7 @@ public class PlayerSystem : SingletonBase<PlayerSystem>
     public void PlayerCardMoveDeck(DeckTag deckTag, int playerIndex, bool isReverse, float reverseTime)
     {
         Players[playerIndex].AllCardMoveDeck(
-            DeckSystem.GetInstance().GetDeck(deckTag),
+            deckTag,
             isReverse,
             reverseTime);
     }
@@ -95,7 +87,7 @@ public class PlayerSystem : SingletonBase<PlayerSystem>
         for (int i = 0; i < Players.Count; i++)
         {
             Players[i].AllCardMoveDeck(
-                DeckSystem.GetInstance().GetDeck(deckTag),
+                deckTag,
                 isReverse,
                 reverseTime);
         }

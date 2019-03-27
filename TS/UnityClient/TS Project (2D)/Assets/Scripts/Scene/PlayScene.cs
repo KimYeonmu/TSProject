@@ -126,7 +126,12 @@ public class PlayScene : IScene
         {
             PlayerSystem.GetInstance().AddPlayer(PlayerTag.PLAYER_BOTTOM, "1", false);
             PlayerSystem.GetInstance().AddPlayer(PlayerTag.PLAYER_TOP, "2", true);
+            //PlayerSystem.GetInstance().AddPlayer(PlayerTag.PLAYER_LEFT_DOWN, "2", true);
+            //PlayerSystem.GetInstance().AddPlayer(PlayerTag.PLAYER_LEFT_UP, "2", true);
+            //PlayerSystem.GetInstance().AddPlayer(PlayerTag.PLAYER_RIGHT_DOWN, "2", true);
+            //PlayerSystem.GetInstance().AddPlayer(PlayerTag.PLAYER_RIGHT_UP, "2", true);
             TurnSystem.GetInstance().SetFirstTurn("1");
+
             //SceneSystem.GetInstance().SceneEvent(SceneEventTag.SCENE_EVENT_OUT);
             //SceneSystem.GetInstance().SceneEvent(SceneEventTag.SCENE_EVENT_SCALE_DOWN);
             //NetworkSystem.GetInstance().SendServer("FIND-ROOM:" + "1");
@@ -171,8 +176,7 @@ public class PlayScene : IScene
 
             int nowTurn = TurnSystem.GetInstance().GetNowTurnPlayerIndex();
             PlayerSystem.GetInstance().Players[nowTurn].EndTurn();
-
-            NetworkSystem.GetInstance().SendServer("NEXT-TURN");
+            TurnSystem.GetInstance().NextTurn();
         }
     }
 

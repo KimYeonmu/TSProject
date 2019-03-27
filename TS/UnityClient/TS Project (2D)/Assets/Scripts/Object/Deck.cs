@@ -70,14 +70,15 @@ public class Deck : IObject
             .Subscribe(_ =>
                 {
                     int i = (int)_;
-                    moveDeck.AddCard(DeckList[i]);
 
                     DeckList[i].SetSortingOrder(i);
-                    DeckList[i].ObjTransform.DOMove(Vector3.zero, moveTime);
+                    DeckList[i].ObjTransform.DOMove(moveDeck.GetPosition(), moveTime);
                     
                     CardAnimationSystem.GetInstance().ReverseAnimation(
                         DeckList[i],
                         moveTime);
+
+                    moveDeck.AddCard(DeckList[i]);
                 },
                 (_ => { DeckList.Clear(); }));
     }

@@ -15,7 +15,7 @@ public class TurnSystem : SingletonBase<TurnSystem>
     public Queue<string> PlayerTurn = new Queue<string>();
 
     public string PlayerNowTurn;
-
+    
     public float TurnTimeOut = 30;
     public float TurnNowTime;
     public float TurnShowTime = 7;
@@ -24,12 +24,10 @@ public class TurnSystem : SingletonBase<TurnSystem>
     public Image TimeObject;
     public Image TimeBackObject;
 
-    private float _timeObjectX;
+    public bool IsFinishTurn = true;
 
     public void Start()
     {
-        _timeObjectX = TimeObject.rectTransform.sizeDelta.x;
-
         TimeObject.canvasRenderer.SetAlpha(0);
         TimeBackObject.canvasRenderer.SetAlpha(0);
 
@@ -41,18 +39,18 @@ public class TurnSystem : SingletonBase<TurnSystem>
                 TimeObject.CrossFadeAlpha(1, 2, false);
 
                 var pos = TimeBackObject.transform.position;
-                TimeBackObject.transform.DOMove(new Vector3(pos.x,pos.y + 30), 1);
+                TimeBackObject.transform.DOMove(new Vector3(pos.x, pos.y + 30), 1);
 
                 pos = TimeObject.transform.position;
-                TimeObject.transform.DOMove(new Vector3(pos.x,pos.y + 30), 1);
+                TimeObject.transform.DOMove(new Vector3(pos.x, pos.y + 30), 1);
             }
             else
             {
                 TimeBackObject.CrossFadeAlpha(0, 1, false);
                 TimeObject.CrossFadeAlpha(0, 1, false);
 
-                TimeBackObject.transform.DOScale(TimeBackObject.transform.localScale * 2, 0.5f);
-                TimeObject.transform.DOScale(TimeObject.transform.localScale * 2, 0.5f)
+                TimeBackObject.transform.DOScale(TimeBackObject.transform.localScale * 2, 1);
+                TimeObject.transform.DOScale(TimeObject.transform.localScale * 2, 1)
                     .OnComplete(() =>
                     {
                         TimeBackObject.transform.Translate(0, -30, 0);
@@ -66,19 +64,22 @@ public class TurnSystem : SingletonBase<TurnSystem>
 
         this.UpdateAsObservable().Subscribe(_ =>
         {
-            var r = TimeObject.rectTransform;
             var scale = TurnNowTime / TurnShowTime;
+            TimeObject.fillAmount = scale;
 
-            r.sizeDelta = new Vector2(_timeObjectX * scale, r.sizeDelta.y);
+            TurnUpdate();
         });
-        
+
     }
 
+    /// <summary>Turn Queue에 플레이어 추가 </summary>
+    /// <param name="playerName">플레이어 이름</param>
     public void AddTurnPlayer(string playerName)
     {
         PlayerTurn.Enqueue(playerName);
     }
 
+    /// <summary>다음 턴으로 넘기는 함수 </summary>
     public void NextTurn()
     {
         PlayerTurn.Enqueue(PlayerTurn.Dequeue());
@@ -87,38 +88,12 @@ public class TurnSystem : SingletonBase<TurnSystem>
 
         TurnNowTime = TurnTimeOut;
 
-        StopCoroutine(StartTurn());
-        StartCoroutine(StartTurn());
+        IsFinishTurn = false;
+
+        NetworkSystem.GetInstance().SendServer("NEXT-TURN");
     }
 
-    public void SetFirstTurn(string playerName)
-    {
-        while(!PlayerTurn.Peek().Equals(playerName))
-            PlayerTurn.Enqueue(PlayerTurn.Dequeue());
-
-        PlayerNowTurn = PlayerTurn.Peek();
-    }
-
-    public IEnumerator StartTurn()
-    {
-        while (TurnNowTime > 0)
-        {
-            TurnNowTime -= Time.deltaTime;
-
-            if (TurnNowTime < TurnShowTime)
-            {
-                IsShowTimeBar.Value = true;
-            }
-
-            yield return null;
-        }
-
-        IsShowTimeBar.Value = false;
-        TurnNowTime = TurnTimeOut;
-
-        NextTurn();
-    }
-
+    /// <summary>첫 번째 턴을 결정하는 함수 </summary>
     public void DecideFirstTurn()
     {
         int nowCardScore = 0;
@@ -126,16 +101,30 @@ public class TurnSystem : SingletonBase<TurnSystem>
 
         for (int i = 0; i < PlayerSystem.GetInstance().Players.Count; i++)
         {
-            if (PlayerSystem.GetInstance().Players[i].PlayerCard[0].GetCardScore() > nowCardScore)
+            int score = PlayerSystem.GetInstance().Players[i].PlayerCard[0].GetCardScore();
+
+            if (score > nowCardScore)
             {
                 playerName = PlayerSystem.GetInstance().Players[i].PlayerId;
-                nowCardScore = PlayerSystem.GetInstance().Players[i].PlayerCard[0].GetCardScore();
+                nowCardScore = score;
             }
         }
 
-       SetFirstTurn(playerName);
+        SetFirstTurn(playerName);
     }
 
+    /// <summary>Turn Queue에서 해당 플레이어를 첫 번째로 배정하는 함수 </summary>
+    /// <param name="playerName">플레이어 이름</param>
+    public void SetFirstTurn(string playerName)
+    {
+        while (!PlayerTurn.Peek().Equals(playerName))
+            PlayerTurn.Enqueue(PlayerTurn.Dequeue());
+
+        PlayerNowTurn = PlayerTurn.Peek();
+    }
+
+    /// <summary>현재 턴의 플레이어 index 반환 함수</summary>
+    /// <returns>현재 턴의 플레이어 index</returns>
     public int GetNowTurnPlayerIndex()
     {
         int count = PlayerSystem.GetInstance().Players.Count;
@@ -149,6 +138,28 @@ public class TurnSystem : SingletonBase<TurnSystem>
         }
 
         return -1;
+    }
+
+    /// <summary>턴의 타이머 업데이트 함수</summary>
+    private void TurnUpdate()
+    {
+        if (!IsFinishTurn)
+        {
+            TurnNowTime -= Time.deltaTime;
+
+            if (TurnNowTime < TurnShowTime)
+            {
+                IsShowTimeBar.Value = true;
+            }
+
+            if (TurnNowTime <= 0)
+            {
+                IsShowTimeBar.Value = false;
+                TurnNowTime = TurnTimeOut;
+                IsFinishTurn = true;
+                NextTurn();
+            }
+        }
     }
 }
 

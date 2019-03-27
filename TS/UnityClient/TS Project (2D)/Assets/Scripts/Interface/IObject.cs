@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.InteropServices.WindowsRuntime;
 using UnityEngine;
 
 public class IObject : MonoBehaviour
@@ -41,7 +42,9 @@ public class IObject : MonoBehaviour
 
     public Vector2 GetScale() { return ObjTransform.localScale; }
 
-    public Vector3 GetRotation() { return ObjTransform.localEulerAngles; }
+    public Vector3 GetAngle() { return ObjTransform.eulerAngles; }
+
+    public Vector3 GetLocalAngle() { return ObjTransform.localEulerAngles; }
 
     public Transform GetParent() { return ObjTransform.parent; }
 

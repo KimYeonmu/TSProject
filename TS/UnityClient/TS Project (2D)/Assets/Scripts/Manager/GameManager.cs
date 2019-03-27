@@ -34,8 +34,6 @@ public class GameManager : SingletonBase<GameManager>
 
         yield return new WaitForSeconds(1);
 
-        PlayerSystem.GetInstance().AllPlayerCardMoveDeck(DeckTag.PUT_DECK, false, 0.5f);
-
-        yield return StartCoroutine(TurnSystem.GetInstance().StartTurn());
+        TurnSystem.GetInstance().IsFinishTurn = false;
     }
 }

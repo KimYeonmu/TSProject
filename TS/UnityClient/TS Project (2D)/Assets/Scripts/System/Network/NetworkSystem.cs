@@ -125,7 +125,7 @@ public class NetworkSystem : SingletonBase<NetworkSystem>
         else if (text[0].Equals("ADD-CARD"))
         {
             int cardNum = Convert.ToInt32(text[2]);
-            StartCoroutine(PlayerSystem.GetInstance().PlayerAddCard(DeckTag.DRAW_DECK, text[1], cardNum));
+            PlayerSystem.GetInstance().PlayerAddCard(DeckTag.DRAW_DECK, text[1], cardNum);
         }
         else if (text[0].Equals("PUT-CARD"))
         {
