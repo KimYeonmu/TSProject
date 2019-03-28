@@ -5,6 +5,8 @@ using System.Text;
 using UnityEngine;
 
 
+/// <summary>싱글톤 베이스 클래스 </summary>
+/// <typeparam name="T">타입</typeparam>
 public class SingletonBase<T> : MonoBehaviour where T : MonoBehaviour
 {
     private static T _instance;

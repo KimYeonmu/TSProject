@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices.WindowsRuntime;
 using UnityEngine;
 
+/// <summary>오브젝트 인터페이스 </summary>
 public class IObject : MonoBehaviour
 {
     public Transform ObjTransform;
@@ -16,6 +17,7 @@ public class IObject : MonoBehaviour
 
     public void SetParent(Transform parent){ObjTransform.parent = parent; }
 
+    /// <summary>오브젝트를 y축으로 뒤집는 함수 </summary>
     public void SetReverse()
     {
         this.SetScale(new Vector3(

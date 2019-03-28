@@ -25,6 +25,10 @@ public class TurnSystem : SingletonBase<TurnSystem>
     public Image TimeBackObject;
 
     public bool IsFinishTurn = true;
+    public bool IsStartTurn;
+    public bool IsAttackTurn;
+
+    public int AttackDamage = 0;
 
     public void Start()
     {
@@ -79,20 +83,32 @@ public class TurnSystem : SingletonBase<TurnSystem>
         PlayerTurn.Enqueue(playerName);
     }
 
+    /// <summary>턴을 시작하는 함수 </summary>
+    public void StartTurn()
+    {
+        IsStartTurn = true;
+        TurnNowTime = TurnTimeOut;
+        IsFinishTurn = false;
+    }
+
     /// <summary>다음 턴으로 넘기는 함수 </summary>
     public void NextTurn()
     {
-        PlayerTurn.Enqueue(PlayerTurn.Dequeue());
-
         PlayerNowTurn = PlayerTurn.Peek();
-
         TurnNowTime = TurnTimeOut;
-
         IsFinishTurn = false;
-
         NetworkSystem.GetInstance().SendServer("NEXT-TURN");
     }
 
+    /// <summary>현재 턴을 종료하는 함수 </summary>
+    public void EndTurn()
+    {
+        PlayerTurn.Enqueue(PlayerTurn.Dequeue());
+        TurnNowTime = 0;
+        IsShowTimeBar.Value = false;
+        IsFinishTurn = true;
+    }
+    
     /// <summary>첫 번째 턴을 결정하는 함수 </summary>
     public void DecideFirstTurn()
     {
@@ -129,6 +145,9 @@ public class TurnSystem : SingletonBase<TurnSystem>
     {
         int count = PlayerSystem.GetInstance().Players.Count;
 
+        if (count <= 0)
+            return -1;
+
         for (int i = 0; i < count; i++)
         {
             if (PlayerNowTurn.Equals(PlayerSystem.GetInstance().Players[i].PlayerId))
@@ -138,6 +157,12 @@ public class TurnSystem : SingletonBase<TurnSystem>
         }
 
         return -1;
+    }
+
+    public void SetAttackTurn(bool isAttack, int damage)
+    {
+        IsAttackTurn = isAttack;
+        AttackDamage = damage;
     }
 
     /// <summary>턴의 타이머 업데이트 함수</summary>
@@ -154,10 +179,7 @@ public class TurnSystem : SingletonBase<TurnSystem>
 
             if (TurnNowTime <= 0)
             {
-                IsShowTimeBar.Value = false;
-                TurnNowTime = TurnTimeOut;
-                IsFinishTurn = true;
-                NextTurn();
+                EndTurn();
             }
         }
     }

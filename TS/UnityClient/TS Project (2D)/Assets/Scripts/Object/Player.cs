@@ -203,17 +203,6 @@ public class Player : MonoBehaviour
         NetworkSystem.GetInstance().SendServer(string.Format("PUT-CARD:{0}:{1}", PlayerId, playerCardIndex));
     }
 
-    public void EndTurn()
-    {
-        if (IsPutCard == false)
-        {
-            NetworkSystem.GetInstance().SendServer(string.Format("ADD-CARD:{0}:{1}",PlayerId,1));
-            return;
-        }
-
-        IsPutCard = false;
-    }
-
     public void SelectCard_Began(Vector2 touchPos)
     {
         BoxCollider2D collider = null;
@@ -250,7 +239,7 @@ public class Player : MonoBehaviour
             if (collider2D.OverlapPoint(touchPos))
             {
                 PlayerCard[i].SetScale(Vector2.one * 1.2f);
-                //PlayerCard[i].SetPosition(CardPositionList[i] + Vector2.up * 1);
+                PlayerCard[i].SetPosition(CardPositionList[i] - Vector2.up);
 
                 if (touchPos.y > -SceneSystem.GetInstance().ScreenWorldPoint.y / 1.3f)
                 {

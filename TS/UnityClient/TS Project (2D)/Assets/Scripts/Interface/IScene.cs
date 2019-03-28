@@ -6,6 +6,7 @@ using System.Text;
 using UnityEngine;
 
 
+/// <summary>씬 인터페이스 </summary>
 public abstract class IScene : MonoBehaviour
 {
     public CanvasGroup SceneCanvasGroup;

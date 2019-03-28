@@ -6,6 +6,8 @@ using UnityEngine;
 
 public class GameManager : SingletonBase<GameManager>
 {
+    public bool IsStartGame = false;
+
     void Awake()
     {
     }
@@ -34,6 +36,8 @@ public class GameManager : SingletonBase<GameManager>
 
         yield return new WaitForSeconds(1);
 
-        TurnSystem.GetInstance().IsFinishTurn = false;
+        IsStartGame = true;
+
+        TurnSystem.GetInstance().StartTurn();
     }
 }

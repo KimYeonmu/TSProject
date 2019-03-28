@@ -73,14 +73,17 @@ public class Deck : IObject
 
                     DeckList[i].SetSortingOrder(i);
                     DeckList[i].ObjTransform.DOMove(moveDeck.GetPosition(), moveTime);
-                    
+
                     CardAnimationSystem.GetInstance().ReverseAnimation(
                         DeckList[i],
                         moveTime);
 
                     moveDeck.AddCard(DeckList[i]);
                 },
-                (_ => { DeckList.Clear(); }));
+                () =>
+                {
+                    DeckList.Clear();
+                });
     }
 
     public void MoveCardDecktoDeck(Deck moveDeck, int cardNum, float intervalTime, float moveTime)
@@ -96,7 +99,9 @@ public class Deck : IObject
                 CardAnimationSystem.GetInstance().ReverseAnimation(
                     DeckList[DeckList.Count - 1],
                     moveTime);
-            },
-                (_ => { DeckList.RemoveAt(DeckList.Count - 1); }));
+
+                Debug.Log("remove card deck");
+                DeckList.RemoveAt(DeckList.Count - 1);
+            });
     }
 }

@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 
+/// <summary>카드 종류들 </summary>
 public enum CardTag
 {
     A = 10,
@@ -20,6 +21,7 @@ public enum CardTag
     CardEnd
 }
 
+/// <summary>카드에 들어가는 데이터 클래스 </summary>
 public class CardData : MonoBehaviour
 {
     public CardTag CardIndex = CardTag.A;

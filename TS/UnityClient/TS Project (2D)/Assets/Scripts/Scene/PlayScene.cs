@@ -2,6 +2,7 @@
 using System.Collections;
 using DG.Tweening;
 using UniRx;
+using UniRx.Triggers;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -31,32 +32,41 @@ public class PlayScene : IScene
         SceneSystem.GetInstance().SetScreenSize(new Vector2(size.x, size.y));
 
         Debug.Log(size);
-
-        
     }
 
     void Start()
     {
         CardSystem.GetInstance().AllCardMoveDeck(DeckSystem.GetInstance().GetDeck(DeckTag.ANIMATION_RIGHT_DECK));
 
-        Observable.Timer(TimeSpan.FromSeconds(1))
-            .Subscribe(_ => 
-            {
-                
-            });
-
         StartCoroutine(StartScene());
-    }
 
-    // Update is called once per frame
-    void Update()
-    {
-        if (TurnSystem.GetInstance().GetNowTurnPlayerIndex() ==
-           PlayerSystem.GetInstance().MyPlayerIndex)
-        {
-            TouchUpdate();
-            TurnUpdate();
-        }
+        this.UpdateAsObservable()
+            .Subscribe(_ =>
+            {
+                if (!GameManager.GetInstance().IsStartGame)
+                    return;
+
+                var nowTurn = TurnSystem.GetInstance().GetNowTurnPlayerIndex();
+
+                if (nowTurn < 0)
+                    return;
+
+                if (nowTurn == PlayerSystem.GetInstance().MyPlayerIndex)
+                    TouchUpdate();
+
+                if (TurnSystem.GetInstance().IsFinishTurn)
+                {
+                    PlayerSystem.GetInstance().CheckPutCardNowTurn(nowTurn);
+
+                    TurnSystem.GetInstance().NextTurn();
+
+                    if (nowTurn == PlayerSystem.GetInstance().MyPlayerIndex)
+                    {
+                        Button btn = TurnEndBtnObject.GetComponent<Button>();
+                        btn.interactable = true;
+                    }
+                }
+            });
     }
 
     public void TouchUpdate()
@@ -110,12 +120,6 @@ public class PlayScene : IScene
         }
     }
 
-    public void TurnUpdate()
-    {
-        Button btn = TurnEndBtnObject.GetComponent<Button>();
-        btn.interactable = true;
-    }
-
     public IEnumerator StartScene()
     {
         DeckSystem.GetInstance().AllMoveCardDecktoDeck(DeckTag.ANIMATION_RIGHT_DECK, DeckTag.DRAW_DECK, 0, 0.05f, 0.5f);
@@ -124,6 +128,7 @@ public class PlayScene : IScene
 
         if (PlayerSystem.GetInstance().Players.Count <= 0)
         {
+            PlayerSystem.GetInstance().MyPlayerId = "1";
             PlayerSystem.GetInstance().AddPlayer(PlayerTag.PLAYER_BOTTOM, "1", false);
             PlayerSystem.GetInstance().AddPlayer(PlayerTag.PLAYER_TOP, "2", true);
             //PlayerSystem.GetInstance().AddPlayer(PlayerTag.PLAYER_LEFT_DOWN, "2", true);
@@ -144,19 +149,19 @@ public class PlayScene : IScene
     {
         DeckSystem.GetInstance().ShuffleDeck(DeckTag.DRAW_DECK, 50);
 
-        StartCoroutine(PlayerSystem.GetInstance().ShareCard(1, 0));
+        //StartCoroutine(PlayerSystem.GetInstance().ShareCard(1, 0));
 
-        yield return new WaitForSeconds(3);
+        //yield return new WaitForSeconds(3);
 
-        TurnSystem.GetInstance().DecideFirstTurn();
+        //TurnSystem.GetInstance().DecideFirstTurn();
 
-        PlayerSystem.GetInstance().AllPlayerCardReverse(0.5f);
+        //PlayerSystem.GetInstance().AllPlayerCardReverse(0.5f);
 
-        yield return new WaitForSeconds(2);
+        //yield return new WaitForSeconds(2);
 
-        PlayerSystem.GetInstance().AllPlayerCardMoveDeck(DeckTag.DRAW_DECK, true, 0.5f);
+        //PlayerSystem.GetInstance().AllPlayerCardMoveDeck(DeckTag.DRAW_DECK, true, 0.5f);
 
-        yield return new WaitForSeconds(2);
+        //yield return new WaitForSeconds(2);
 
         yield return StartCoroutine(GameManager.GetInstance().StartGame());
     }
@@ -174,9 +179,7 @@ public class PlayScene : IScene
             Button btn = TurnEndBtnObject.GetComponent<Button>();
             btn.interactable = false;
 
-            int nowTurn = TurnSystem.GetInstance().GetNowTurnPlayerIndex();
-            PlayerSystem.GetInstance().Players[nowTurn].EndTurn();
-            TurnSystem.GetInstance().NextTurn();
+            TurnSystem.GetInstance().EndTurn();
         }
     }
 
@@ -186,8 +189,10 @@ public class PlayScene : IScene
 
         for (int i = 0; i < obj.Length; i++)
         {
-            if (IsChatBtnClick == false) { obj[i].Play("Show"); }
-            else { obj[i].Play("Close"); }
+            if (IsChatBtnClick == false)
+                obj[i].Play("Show");
+            else
+                obj[i].Play("Close");
         }
 
         IsChatBtnClick = !IsChatBtnClick;

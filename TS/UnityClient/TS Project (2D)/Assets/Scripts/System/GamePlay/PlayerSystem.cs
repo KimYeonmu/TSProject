@@ -36,10 +36,9 @@ public class PlayerSystem : SingletonBase<PlayerSystem>
             .Take(cardNum)
             .Subscribe(_ =>
             {
-                var player = Players.Where(p => p.PlayerId == playerName)
-                    .GetEnumerator().Current;
+                var player = Players.Find(p =>p.PlayerId == playerName);
 
-                var card = DeckSystem.GetInstance().GetTopCardPeekWithDeck(DeckTag.DRAW_DECK);
+                var card = DeckSystem.GetInstance().GetTopCardWithDeck(DeckTag.DRAW_DECK);
 
                 if (player == null)
                 {
@@ -56,8 +55,7 @@ public class PlayerSystem : SingletonBase<PlayerSystem>
 
     public void PlayerPutCard(DeckTag deckTag, string playerName, int cardListIndex, float reverseTime = 0.5f)
     {
-        var player = Players.Where(p => p.PlayerId == playerName)
-            .GetEnumerator().Current;
+        var player = Players.Find(p => p.PlayerId == playerName);
 
         AlertSystem.GetInstance().AddAlerts(player.PlayerCard[cardListIndex]);
         player.PutCard(deckTag,cardListIndex,false,reverseTime);
@@ -103,7 +101,7 @@ public class PlayerSystem : SingletonBase<PlayerSystem>
         {
             for (int j = 0; j < cardNum; j++)
             {
-                Card card = DeckSystem.GetInstance().GetDeck(DeckTag.DRAW_DECK).GetTopCard();
+                Card card = DeckSystem.GetInstance().GetTopCardWithDeck(DeckTag.DRAW_DECK);
 
                 if (tempTurn + i >= Players.Count)
                     tempTurn -= Players.Count;
@@ -113,5 +111,21 @@ public class PlayerSystem : SingletonBase<PlayerSystem>
                 yield return delay;
             }
         }
+    }
+
+    public void CheckPutCardNowTurn(int playerIndex)
+    {
+        var player = Players[playerIndex];
+        var id = Players[playerIndex].PlayerId;
+
+        Debug.Log(id);
+
+        if (!player.IsPutCard)
+        {
+            PlayerAddCard(DeckTag.DRAW_DECK, id, 1);
+            NetworkSystem.GetInstance().SendServer(string.Format("ADD-CARD:{0}:{1}", id, 1));
+        }
+
+        player.IsPutCard = false;
     }
 }

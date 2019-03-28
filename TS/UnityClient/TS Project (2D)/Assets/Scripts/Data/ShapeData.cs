@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 
+/// <summary>카드 모양 종류들 </summary>
 public enum ShapeTag
 {
     Spade = 0,
@@ -8,6 +9,7 @@ public enum ShapeTag
     Club,
 }
 
+/// <summary>카드에 들어가는 모양의 위치 종류들 </summary>
 public enum ShapePosTag
 {
     Center,
@@ -31,6 +33,7 @@ public enum ShapePosTag
     SideRight,
 }
 
+/// <summary>카드에 들어가는 모양의 데이터 클래스 </summary>
 public class ShapeData : MonoBehaviour
 {
     public SpriteRenderer ShapeRenderer;

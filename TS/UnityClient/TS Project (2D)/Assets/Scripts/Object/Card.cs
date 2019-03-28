@@ -10,9 +10,6 @@ public class Card : IObject
     public Sprite BackCardSprite;
 
     public bool IsBack = false;
-    public bool IsAttackCard;
-    
-    public int AttackCardNum;
 
     private CardData _data;
 
