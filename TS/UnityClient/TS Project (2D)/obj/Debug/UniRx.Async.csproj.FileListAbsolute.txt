@@ -599,3 +599,4 @@ C:\Unity\Personal\TSProject\TS\UnityClient\TS Project (2D)\obj\Debug\UniRx.Async
 C:\Unity\Personal\TSProject\TS\UnityClient\TS Project (2D)\obj\Debug\UniRx.Async.csproj.CopyComplete
 C:\Unity\Personal\TSProject\TS\UnityClient\TS Project (2D)\obj\Debug\UniRx.Async.dll
 C:\Unity\Personal\TSProject\TS\UnityClient\TS Project (2D)\obj\Debug\UniRx.Async.pdb
+C:\Unity\Personal\TSProject\TS\UnityClient\TS Project (2D)\Temp\bin\Debug\UnityEditor.Android.Extensions.dll

@@ -36,6 +36,7 @@ public class PlayScene : IScene
 
     void Start()
     {
+        CardSystem.GetInstance().AddAllCard();
         CardSystem.GetInstance().AllCardMoveDeck(DeckSystem.GetInstance().GetDeck(DeckTag.ANIMATION_RIGHT_DECK));
 
         StartCoroutine(StartScene());

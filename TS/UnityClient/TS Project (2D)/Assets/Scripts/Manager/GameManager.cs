@@ -15,10 +15,8 @@ public class GameManager : SingletonBase<GameManager>
     // Use this for initialization
     void Start()
     {
-        
         //NetworkSystem.GetInstance().StartConnect();
 
-        CardSystem.GetInstance().AddAllCard();
         CardSystem.GetInstance().SetCardActive(true);
     }
 

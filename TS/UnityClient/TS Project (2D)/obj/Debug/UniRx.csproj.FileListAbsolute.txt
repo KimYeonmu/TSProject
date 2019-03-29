@@ -601,3 +601,4 @@ C:\Unity\Personal\TSProject\TS\UnityClient\TS Project (2D)\obj\Debug\UniRx.cspro
 C:\Unity\Personal\TSProject\TS\UnityClient\TS Project (2D)\obj\Debug\UniRx.csproj.CopyComplete
 C:\Unity\Personal\TSProject\TS\UnityClient\TS Project (2D)\obj\Debug\UniRx.dll
 C:\Unity\Personal\TSProject\TS\UnityClient\TS Project (2D)\obj\Debug\UniRx.pdb
+C:\Unity\Personal\TSProject\TS\UnityClient\TS Project (2D)\Temp\bin\Debug\UnityEditor.Android.Extensions.dll
