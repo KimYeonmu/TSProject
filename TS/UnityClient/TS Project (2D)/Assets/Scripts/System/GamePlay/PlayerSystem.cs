@@ -113,17 +113,18 @@ public class PlayerSystem : SingletonBase<PlayerSystem>
         }
     }
 
-    public void CheckPutCardNowTurn(int playerIndex)
+    public void CheckPutCardNowTurn(int playerIndex, bool IsAttack, int AttackDamage)
     {
         var player = Players[playerIndex];
         var id = Players[playerIndex].PlayerId;
+        var damage = IsAttack ? AttackDamage : 1;
 
         Debug.Log(id);
-
+        
         if (!player.IsPutCard)
         {
-            PlayerAddCard(DeckTag.DRAW_DECK, id, 1);
-            NetworkSystem.GetInstance().SendServer(string.Format("ADD-CARD:{0}:{1}", id, 1));
+            PlayerAddCard(DeckTag.DRAW_DECK, id, damage);
+            NetworkSystem.GetInstance().SendServer(string.Format("ADD-CARD:{0}:{1}", id, damage));
         }
 
         player.IsPutCard = false;

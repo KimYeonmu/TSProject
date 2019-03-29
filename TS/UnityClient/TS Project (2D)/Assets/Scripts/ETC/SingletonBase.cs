@@ -24,6 +24,6 @@ public class SingletonBase<T> : MonoBehaviour where T : MonoBehaviour
         }
 
         return _instance;
-    }
+        }
 }
 

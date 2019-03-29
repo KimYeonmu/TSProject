@@ -30,13 +30,13 @@ public class PlayScene : IScene
         var size = GameObject.FindWithTag("Background").GetComponent<SpriteRenderer>().sprite.bounds.size;
 
         SceneSystem.GetInstance().SetScreenSize(new Vector2(size.x, size.y));
-
-        Debug.Log(size);
     }
 
     void Start()
     {
         CardSystem.GetInstance().AddAllCard();
+        CardSystem.GetInstance().SetCardActive(true);
+
         CardSystem.GetInstance().AllCardMoveDeck(DeckSystem.GetInstance().GetDeck(DeckTag.ANIMATION_RIGHT_DECK));
 
         StartCoroutine(StartScene());
@@ -54,10 +54,18 @@ public class PlayScene : IScene
 
                 if (nowTurn == PlayerSystem.GetInstance().MyPlayerIndex)
                     TouchUpdate();
+                else
+                {
+                    if (!AiSystem.GetInstance().RandomCard(nowTurn))
+                        TurnSystem.GetInstance().EndTurn();
+                }
+                
 
                 if (TurnSystem.GetInstance().IsFinishTurn)
                 {
-                    PlayerSystem.GetInstance().CheckPutCardNowTurn(nowTurn);
+                    PlayerSystem.GetInstance().CheckPutCardNowTurn(nowTurn,
+                        RuleSystem.GetInstance().IsAttackTurn,
+                        RuleSystem.GetInstance().SaveAttackDamage);
 
                     TurnSystem.GetInstance().NextTurn();
 

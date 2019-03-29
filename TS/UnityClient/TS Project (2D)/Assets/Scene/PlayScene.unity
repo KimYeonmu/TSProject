@@ -1956,6 +1956,32 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   RootResourceObj: {fileID: 1794207120}
+--- !u!114 &1227456229
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1227456214}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3333acbced261324cb9bc80d5cc82a5b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1227456230
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1227456214}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f9eeaaa9ee3b8a04d9981b5af4d11bda, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  IsAttackTurn: 0
+  SaveAttackDamage: 0
 --- !u!1 &1240803777
 GameObject:
   m_ObjectHideFlags: 0

@@ -26,9 +26,7 @@ public class TurnSystem : SingletonBase<TurnSystem>
 
     public bool IsFinishTurn = true;
     public bool IsStartTurn;
-    public bool IsAttackTurn;
-
-    public int AttackDamage = 0;
+    
 
     public void Start()
     {
@@ -157,12 +155,6 @@ public class TurnSystem : SingletonBase<TurnSystem>
         }
 
         return -1;
-    }
-
-    public void SetAttackTurn(bool isAttack, int damage)
-    {
-        IsAttackTurn = isAttack;
-        AttackDamage = damage;
     }
 
     /// <summary>턴의 타이머 업데이트 함수</summary>

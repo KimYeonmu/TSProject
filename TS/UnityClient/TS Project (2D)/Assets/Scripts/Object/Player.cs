@@ -188,7 +188,7 @@ public class Player : MonoBehaviour
         PlayerCard[playerCardIndex].transform.DOMove(deck.GetPosition(), 0.5f);
         PlayerCard[playerCardIndex].transform.DORotate(deck.GetAngle(), 0.5f);
 
-        if (isBack != PlayerCard[playerCardIndex].IsBack)
+        if (isBack)
         {
             CardAnimationSystem.GetInstance().ReverseAnimation(
                 PlayerCard[playerCardIndex], reverseTime);
@@ -199,6 +199,8 @@ public class Player : MonoBehaviour
         PlayerCard.RemoveAt(playerCardIndex);
 
         RePosition();
+
+        IsPutCard = true;
 
         NetworkSystem.GetInstance().SendServer(string.Format("PUT-CARD:{0}:{1}", PlayerId, playerCardIndex));
     }
@@ -274,9 +276,9 @@ public class Player : MonoBehaviour
         {
             IsHoldCard = false;
 
-            var isCompare = DeckSystem.GetInstance().CompareCard(DeckTag.PUT_DECK,
-                PlayerCard[HoldCardNum].GetShapeIndex(),
-                PlayerCard[HoldCardNum].GetCardIndex(),
+            var isCompare = RuleSystem.GetInstance().CompareCard(
+                DeckSystem.GetInstance().GetTopCardPeekWithDeck(DeckTag.PUT_DECK),
+                PlayerCard[HoldCardNum],
                 IsPutCard);
 
             if (PlayerCard[HoldCardNum].GetPosition().y < -SceneSystem.GetInstance().ScreenSize.y * 0.4f ||
@@ -287,7 +289,6 @@ public class Player : MonoBehaviour
             }
             else
             {
-                IsPutCard = true;
                 PlayerCard[HoldCardNum].SetSortingOrder(HoldCardNum + 1);
                 PutCard(DeckTag.PUT_DECK,HoldCardNum);
             }

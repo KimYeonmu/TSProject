@@ -74,60 +74,7 @@ public class DeckSystem : SingletonBase<DeckSystem>
         Decks[(int)deckTag].ShuffleDeck(shuffleNum);
     }
 
-    public bool CompareCard(DeckTag deckTag, ShapeTag shapeTag, CardTag cardTag, bool IsPutCard)
-    {
-        ShapeTag deckShape = Decks[(int) deckTag].GetTopCardPeek().GetShapeIndex();
-        CardTag deckCard = Decks[(int) deckTag].GetTopCardPeek().GetCardIndex();
-
-        if (IsPutCard == true)
-        {
-            if (deckCard == cardTag ||
-                deckCard == CardTag.Joker && cardTag == CardTag.JokerR ||
-                deckCard == CardTag.JokerR && cardTag == CardTag.Joker)
-            {
-                return true;
-            }
-
-            return false;
-        }
-
-        if (deckCard == CardTag.Joker)
-        {
-            if (shapeTag == ShapeTag.Club || shapeTag == ShapeTag.Spade)
-            {
-                return true;
-            }
-        }
-        
-        else if (deckCard == CardTag.JokerR)
-        {
-            if (shapeTag == ShapeTag.Heart || shapeTag == ShapeTag.Diamond)
-            {
-                return true;
-            }
-        }
-
-        if (cardTag == CardTag.Joker)
-        {
-            if (deckShape == ShapeTag.Club || deckShape == ShapeTag.Spade)
-            {
-                return true;
-            }
-        }
-
-        else if (cardTag == CardTag.JokerR)
-        {
-            if (deckShape == ShapeTag.Heart || deckShape == ShapeTag.Diamond)
-            {
-                return true;
-            }
-        }
-
-        if (deckShape == shapeTag || deckCard == cardTag)
-            return true;
-
-        return false;
-    }
+    
 
 }
 
