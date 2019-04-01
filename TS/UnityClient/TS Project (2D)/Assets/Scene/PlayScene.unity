@@ -599,7 +599,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 604418980, guid: a6794d88738e2a3438d2308bc08f8ef3, type: 3}
       propertyPath: TurnShowTime
-      value: 7
+      value: 20
       objectReference: {fileID: 0}
     - target: {fileID: 604418980, guid: a6794d88738e2a3438d2308bc08f8ef3, type: 3}
       propertyPath: TimeBackObject
@@ -609,6 +609,10 @@ PrefabInstance:
       propertyPath: TimeObject
       value: 
       objectReference: {fileID: 672446887}
+    - target: {fileID: 604418980, guid: a6794d88738e2a3438d2308bc08f8ef3, type: 3}
+      propertyPath: TurnTimeOut
+      value: 30
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a6794d88738e2a3438d2308bc08f8ef3, type: 3}
 --- !u!1 &285108878

@@ -63,9 +63,13 @@ public class PlayScene : IScene
 
                 if (TurnSystem.GetInstance().IsFinishTurn)
                 {
-                    PlayerSystem.GetInstance().CheckPutCardNowTurn(nowTurn,
+                    if (PlayerSystem.GetInstance().CheckPutCardNowTurn(nowTurn,
                         RuleSystem.GetInstance().IsAttackTurn,
-                        RuleSystem.GetInstance().SaveAttackDamage);
+                        RuleSystem.GetInstance().SaveAttackDamage))
+                    {
+                        RuleSystem.GetInstance().IsAttackTurn = false;
+                        RuleSystem.GetInstance().SaveAttackDamage = 0;
+                    }
 
                     TurnSystem.GetInstance().NextTurn();
 

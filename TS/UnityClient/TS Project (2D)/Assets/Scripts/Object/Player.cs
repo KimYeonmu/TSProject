@@ -196,11 +196,16 @@ public class Player : MonoBehaviour
 
         deck.AddCard(PlayerCard[playerCardIndex]);
 
+        RuleSystem.GetInstance().AddAttackCardDamage(
+            PlayerCard[playerCardIndex].GetCardIndex(),
+            PlayerCard[playerCardIndex].GetShapeIndex());
+
+        if (PlayerCard[playerCardIndex].GetCardIndex() != CardTag.K)
+            IsPutCard = true;
+
         PlayerCard.RemoveAt(playerCardIndex);
 
         RePosition();
-
-        IsPutCard = true;
 
         NetworkSystem.GetInstance().SendServer(string.Format("PUT-CARD:{0}:{1}", PlayerId, playerCardIndex));
     }

@@ -7,51 +7,59 @@ public class RuleSystem : SingletonBase<RuleSystem>
     public bool IsAttackTurn;
     public int SaveAttackDamage = 0;
 
-    // TODO: 공격카드 먹게 고쳐야함
-
     public bool CompareCard(Card deckCard, Card putCard, bool isPutCard)
     {
         var deckShape = deckCard.GetShapeIndex();
         var deckCardIndex = deckCard.GetCardIndex();
 
         var putShape = putCard.GetShapeIndex();
-        var putCardTag = putCard.GetCardIndex();
-
-        CheckAttackCardRule(putCardTag, putShape);
-
-        if (CheckAttackTurn(deckCardIndex, deckShape, putCardTag, putShape))
-            return true;
+        var putCardIndex = putCard.GetCardIndex();
 
         if (isPutCard)
         {
-            if (deckCardIndex == putCardTag ||
-                deckCardIndex == CardTag.K)
+            if (deckCardIndex == putCardIndex ||
+                deckCardIndex == CardTag.K && deckShape == putShape)
             {
                 return true;
+            }
+
+            if (deckCardIndex == CardTag.Joker || deckCardIndex == CardTag.JokerR)
+            {
+                if (putCardIndex == CardTag.Joker || putCardIndex == CardTag.JokerR)
+                    return true;
             }
 
             return false;
         }
 
-        if (CheckPutCardRule(deckCardIndex, putShape, CardTag.Joker, ShapeTag.Club, ShapeTag.Spade) ||
-            CheckPutCardRule(deckCardIndex, putShape, CardTag.JokerR, ShapeTag.Heart, ShapeTag.Diamond) ||
-            CheckPutCardRule(putCardTag, deckShape, CardTag.Joker, ShapeTag.Club, ShapeTag.Spade) ||
-            CheckPutCardRule(putCardTag, deckShape, CardTag.JokerR, ShapeTag.Heart, ShapeTag.Diamond))
+        if (CheckPutCardRule(deckCardIndex, CardTag.Joker, putShape, ShapeTag.Club, ShapeTag.Spade) ||
+            CheckPutCardRule(deckCardIndex, CardTag.JokerR, putShape, ShapeTag.Heart, ShapeTag.Diamond) ||
+            CheckPutCardRule(putCardIndex, CardTag.Joker, deckShape, ShapeTag.Club, ShapeTag.Spade) ||
+            CheckPutCardRule(putCardIndex, CardTag.JokerR, deckShape, ShapeTag.Heart, ShapeTag.Diamond))
         {
             return true;
         }
 
-        if (deckShape == putShape || deckCardIndex == putCardTag)
-            return true;
+        if (CheckAttackTurn(deckCardIndex, deckShape, putCardIndex, putShape))
+        {
+            if (deckShape == putShape || deckCardIndex == putCardIndex)
+            {
+                //if (!CheckAttackCard(putCardIndex))
+                {
+                    return true;
+                }
+            }
+        }
 
         return false;
     }
 
-    private bool CheckPutCardRule(CardTag deckCard, ShapeTag putCardShape, CardTag ruleCard, ShapeTag ruleShape1, ShapeTag ruleShape2)
+    private bool CheckPutCardRule(CardTag deckCard, CardTag ruleCard, ShapeTag putCardShape, ShapeTag ruleShape1, ShapeTag ruleShape2)
     {
-        if (deckCard == ruleCard)
-            if (putCardShape == ruleShape1 || putCardShape == ruleShape2)
-                return true;
+        if (!IsAttackTurn)
+            if (deckCard == ruleCard)
+                if (putCardShape == ruleShape1 || putCardShape == ruleShape2)
+                    return true;
 
         return false;
     }
@@ -59,7 +67,7 @@ public class RuleSystem : SingletonBase<RuleSystem>
     private bool CheckAttackTurn(CardTag deckCard, ShapeTag deckShape, CardTag putCard, ShapeTag putShape)
     {
         if (!IsAttackTurn)
-            return false;
+            return true;
 
         if (deckCard == CardTag.A && deckShape == ShapeTag.Spade)
         {
@@ -76,23 +84,36 @@ public class RuleSystem : SingletonBase<RuleSystem>
 
             if (putCard == CardTag.A && deckShape == putShape)
                 return true;
+
+            return false;
         }
 
-        if (deckCard == putCard)
+        if (deckCard == CardTag.Joker || deckCard == CardTag.JokerR)
         {
-            return true;
+            if (putCard == CardTag.Joker || putCard == CardTag.JokerR)
+                return true;
+
+            return false;
         }
+
+        return true;
+    }
+
+    public bool CheckAttackCard(CardTag card)
+    {
+        if (card == CardTag.N2 || card == CardTag.A || card == CardTag.Joker || card == CardTag.JokerR)
+            return true;
 
         return false;
     }
 
-    private void CheckAttackCardRule(CardTag putCard, ShapeTag putShape)
+    public void AddAttackCardDamage(CardTag putCard, ShapeTag putShape)
     {
-        Debug.Log("Attack turn on");
-        IsAttackTurn = true;
-
         if (putCard == CardTag.N2)
+        {
+            IsAttackTurn = true;
             SaveAttackDamage += 2;
+        }
 
         else if (putCard == CardTag.A)
         {
@@ -100,19 +121,23 @@ public class RuleSystem : SingletonBase<RuleSystem>
                 SaveAttackDamage += 5;
             else
                 SaveAttackDamage += 3;
+
+            IsAttackTurn = true;
         }
 
         else if (putCard == CardTag.Joker)
-            SaveAttackDamage += 5;
-        else if (putCard == CardTag.JokerR)
-            SaveAttackDamage += 7;
-
-        else
         {
-            Debug.Log("Attack turn off");
-            IsAttackTurn = false;
+            IsAttackTurn = true;
+            SaveAttackDamage += 5;
         }
-            
+
+        else if (putCard == CardTag.JokerR)
+        {
+            IsAttackTurn = true;
+            SaveAttackDamage += 7;
+        }
+
+        Debug.Log("attack damage" + SaveAttackDamage);
     }
 }
 
