@@ -15,11 +15,18 @@ public class RuleSystem : SingletonBase<RuleSystem>
         var putShape = putCard.GetShapeIndex();
         var putCardIndex = putCard.GetCardIndex();
 
+
         if (isPutCard)
         {
             if (deckCardIndex == putCardIndex ||
                 deckCardIndex == CardTag.K && deckShape == putShape)
             {
+                if (putCardIndex == CardTag.Q)
+                    TurnSystem.GetInstance().ReverseTurn();
+
+                if (putCardIndex == CardTag.J)
+                    TurnSystem.GetInstance().JumpTurn();
+
                 return true;
             }
 
@@ -44,11 +51,18 @@ public class RuleSystem : SingletonBase<RuleSystem>
         {
             if (deckShape == putShape || deckCardIndex == putCardIndex)
             {
-                //if (!CheckAttackCard(putCardIndex))
-                {
-                    return true;
-                }
+                if (putCardIndex == CardTag.Q)
+                    TurnSystem.GetInstance().ReverseTurn();
+
+                if (putCardIndex == CardTag.J)
+                    TurnSystem.GetInstance().JumpTurn();
+
+                return true;
             }
+
+            if (deckCardIndex == CardTag.Joker && putCardIndex == CardTag.JokerR ||
+                deckCardIndex == CardTag.JokerR && putCardIndex == CardTag.Joker)
+                return true;
         }
 
         return false;
@@ -69,14 +83,18 @@ public class RuleSystem : SingletonBase<RuleSystem>
         if (!IsAttackTurn)
             return true;
 
-        if (deckCard == CardTag.A && deckShape == ShapeTag.Spade)
+        if (deckCard == CardTag.A)
         {
-            if (putCard == CardTag.Joker)
+            if (deckShape == ShapeTag.Spade && putCard == CardTag.Joker)
+                return true;
+
+            if (putCard == CardTag.A)
                 return true;
 
             return false;
         }
 
+        
         if (deckCard == CardTag.N2)
         {
             if (putCard == CardTag.N2)

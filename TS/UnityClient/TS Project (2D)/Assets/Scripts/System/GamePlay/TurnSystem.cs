@@ -26,7 +26,7 @@ public class TurnSystem : SingletonBase<TurnSystem>
 
     public bool IsFinishTurn = true;
     public bool IsStartTurn;
-    
+
 
     public void Start()
     {
@@ -35,6 +35,7 @@ public class TurnSystem : SingletonBase<TurnSystem>
 
         IsShowTimeBar.Subscribe(value =>
         {
+            //PlayerTurn.Reverse();
             if (value)
             {
                 TimeBackObject.CrossFadeAlpha(0.6f, 2, false);
@@ -106,7 +107,20 @@ public class TurnSystem : SingletonBase<TurnSystem>
         IsShowTimeBar.Value = false;
         IsFinishTurn = true;
     }
-    
+
+    /// <summary>턴을 하나 건너뜀 </summary>
+    public void JumpTurn()
+    {
+        PlayerTurn.Enqueue(PlayerTurn.Dequeue());
+    }
+
+    /// <summary>턴을 반대로 바꿈 </summary>
+    public void ReverseTurn()
+    {
+        //PlayerTurn.Enqueue(PlayerTurn.Dequeue());
+        PlayerTurn = new Queue<string>(PlayerTurn.Reverse());
+    }
+
     /// <summary>첫 번째 턴을 결정하는 함수 </summary>
     public void DecideFirstTurn()
     {
