@@ -154,8 +154,6 @@ public class RuleSystem : SingletonBase<RuleSystem>
             IsAttackTurn = true;
             SaveAttackDamage += 7;
         }
-
-        Debug.Log("attack damage" + SaveAttackDamage);
     }
 }
 

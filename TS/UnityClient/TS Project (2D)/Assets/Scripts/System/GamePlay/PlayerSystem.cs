@@ -119,7 +119,7 @@ public class PlayerSystem : SingletonBase<PlayerSystem>
         var id = Players[playerIndex].PlayerId;
         var damage = IsAttack ? AttackDamage : 1;
 
-        Debug.Log("player : "+id + " isput : " + player.IsPutCard + " Damage : " + damage + " isattack " + IsAttack);
+        //Debug.Log("player : "+id + " isput : " + player.IsPutCard + " Damage : " + damage + " isattack " + IsAttack);
         
         if (!player.IsPutCard)
         {

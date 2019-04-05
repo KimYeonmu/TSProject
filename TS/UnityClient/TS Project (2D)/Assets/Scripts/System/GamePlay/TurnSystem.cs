@@ -14,19 +14,20 @@ public class TurnSystem : SingletonBase<TurnSystem>
 {
     public Queue<string> PlayerTurn = new Queue<string>();
 
-    public string PlayerNowTurn;
     
+
     public float TurnTimeOut = 30;
     public float TurnNowTime;
     public float TurnShowTime = 7;
+    public StringReactiveProperty PlayerNowTurn;
     public BoolReactiveProperty IsShowTimeBar = new BoolReactiveProperty(false);
+    public BoolReactiveProperty IsFinishTurn = new BoolReactiveProperty(false);
 
     public Image TimeObject;
     public Image TimeBackObject;
 
-    public bool IsFinishTurn = true;
-    public bool IsStartTurn;
 
+    public bool IsStartTurn;
 
     public void Start()
     {
@@ -87,15 +88,15 @@ public class TurnSystem : SingletonBase<TurnSystem>
     {
         IsStartTurn = true;
         TurnNowTime = TurnTimeOut;
-        IsFinishTurn = false;
+        IsFinishTurn.Value = false;
     }
 
     /// <summary>다음 턴으로 넘기는 함수 </summary>
     public void NextTurn()
     {
-        PlayerNowTurn = PlayerTurn.Peek();
+        PlayerNowTurn.Value = PlayerTurn.Peek();
         TurnNowTime = TurnTimeOut;
-        IsFinishTurn = false;
+        IsFinishTurn.Value = false;
         NetworkSystem.GetInstance().SendServer("NEXT-TURN");
     }
 
@@ -105,7 +106,7 @@ public class TurnSystem : SingletonBase<TurnSystem>
         PlayerTurn.Enqueue(PlayerTurn.Dequeue());
         TurnNowTime = 0;
         IsShowTimeBar.Value = false;
-        IsFinishTurn = true;
+        IsFinishTurn.Value = true;
     }
 
     /// <summary>턴을 하나 건너뜀 </summary>
@@ -148,7 +149,7 @@ public class TurnSystem : SingletonBase<TurnSystem>
         while (!PlayerTurn.Peek().Equals(playerName))
             PlayerTurn.Enqueue(PlayerTurn.Dequeue());
 
-        PlayerNowTurn = PlayerTurn.Peek();
+        PlayerNowTurn.Value = PlayerTurn.Peek();
     }
 
     /// <summary>현재 턴의 플레이어 index 반환 함수</summary>
@@ -162,7 +163,7 @@ public class TurnSystem : SingletonBase<TurnSystem>
 
         for (int i = 0; i < count; i++)
         {
-            if (PlayerNowTurn.Equals(PlayerSystem.GetInstance().Players[i].PlayerId))
+            if (PlayerNowTurn.Value.Equals(PlayerSystem.GetInstance().Players[i].PlayerId))
             {
                 return i;
             }
@@ -174,7 +175,7 @@ public class TurnSystem : SingletonBase<TurnSystem>
     /// <summary>턴의 타이머 업데이트 함수</summary>
     private void TurnUpdate()
     {
-        if (!IsFinishTurn)
+        if (!IsFinishTurn.Value && GameManager.GetInstance().IsStartGame)
         {
             TurnNowTime -= Time.deltaTime;
 

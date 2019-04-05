@@ -4,6 +4,7 @@ using DG.Tweening;
 using UniRx;
 using UniRx.Triggers;
 using UnityEngine;
+using UnityEngine.Experimental.PlayerLoop;
 using UnityEngine.UI;
 
 
@@ -39,6 +40,20 @@ public class PlayScene : IScene
 
         CardSystem.GetInstance().AllCardMoveDeck(DeckSystem.GetInstance().GetDeck(DeckTag.ANIMATION_RIGHT_DECK));
 
+        if (PlayerSystem.GetInstance().Players.Count <= 0)
+        {
+            PlayerSystem.GetInstance().MyPlayerId = "1";
+            PlayerSystem.GetInstance().AddPlayer(PlayerTag.PLAYER_BOTTOM, "1", false);
+            PlayerSystem.GetInstance().AddPlayer(PlayerTag.PLAYER_LEFT_DOWN, "3", true);
+            PlayerSystem.GetInstance().AddPlayer(PlayerTag.PLAYER_TOP, "2", true);
+            PlayerSystem.GetInstance().AddPlayer(PlayerTag.PLAYER_RIGHT_UP, "4", true);
+            TurnSystem.GetInstance().SetFirstTurn("1");
+
+            //SceneSystem.GetInstance().SceneEvent(SceneEventTag.SCENE_EVENT_OUT);
+            //SceneSystem.GetInstance().SceneEvent(SceneEventTag.SCENE_EVENT_SCALE_DOWN);
+            //NetworkSystem.GetInstance().SendServer("FIND-ROOM:" + "1");
+        }
+
         StartCoroutine(StartScene());
 
         this.UpdateAsObservable()
@@ -54,32 +69,50 @@ public class PlayScene : IScene
 
                 if (nowTurn == PlayerSystem.GetInstance().MyPlayerIndex)
                     TouchUpdate();
-                else
-                {
-                    if (!AiSystem.GetInstance().RandomCard(nowTurn))
-                        TurnSystem.GetInstance().EndTurn();
-                }
-                
-
-                if (TurnSystem.GetInstance().IsFinishTurn)
-                {
-                    if (PlayerSystem.GetInstance().CheckPutCardNowTurn(nowTurn,
-                        RuleSystem.GetInstance().IsAttackTurn,
-                        RuleSystem.GetInstance().SaveAttackDamage))
-                    {
-                        RuleSystem.GetInstance().IsAttackTurn = false;
-                        RuleSystem.GetInstance().SaveAttackDamage = 0;
-                    }
-
-                    TurnSystem.GetInstance().NextTurn();
-
-                    if (nowTurn == PlayerSystem.GetInstance().MyPlayerIndex)
-                    {
-                        Button btn = TurnEndBtnObject.GetComponent<Button>();
-                        btn.interactable = true;
-                    }
-                }
             });
+
+        TurnSystem.GetInstance().PlayerNowTurn.Subscribe(name =>
+        {
+            if (!GameManager.GetInstance().IsStartGame)
+                return;
+
+            var nowTurn = TurnSystem.GetInstance().GetNowTurnPlayerIndex();
+
+            if (nowTurn != PlayerSystem.GetInstance().MyPlayerIndex)
+                AiSystem.GetInstance().IsStartAi.Value = true;
+                
+        });
+
+        TurnSystem.GetInstance().IsFinishTurn.Subscribe(finish =>
+        {
+            if (!GameManager.GetInstance().IsStartGame)
+                return;
+
+            if (finish && GameManager.GetInstance().IsStartGame)
+            {
+                var nowTurn = TurnSystem.GetInstance().GetNowTurnPlayerIndex();
+
+                Observable.Timer(TimeSpan.FromSeconds(1))
+                    .Subscribe(_ =>
+                    {
+                        if (PlayerSystem.GetInstance().CheckPutCardNowTurn(nowTurn,
+                            RuleSystem.GetInstance().IsAttackTurn,
+                            RuleSystem.GetInstance().SaveAttackDamage))
+                        {
+                            RuleSystem.GetInstance().IsAttackTurn = false;
+                            RuleSystem.GetInstance().SaveAttackDamage = 0;
+                        }
+
+                        TurnSystem.GetInstance().NextTurn();
+
+                        if (nowTurn == PlayerSystem.GetInstance().MyPlayerIndex)
+                        {
+                            Button btn = TurnEndBtnObject.GetComponent<Button>();
+                            btn.interactable = true;
+                        }
+                    });
+            }
+        });
     }
 
     public void TouchUpdate()
@@ -139,21 +172,7 @@ public class PlayScene : IScene
 
         yield return new WaitForSeconds(5);
 
-        if (PlayerSystem.GetInstance().Players.Count <= 0)
-        {
-            PlayerSystem.GetInstance().MyPlayerId = "1";
-            PlayerSystem.GetInstance().AddPlayer(PlayerTag.PLAYER_BOTTOM, "1", false);
-            PlayerSystem.GetInstance().AddPlayer(PlayerTag.PLAYER_TOP, "2", true);
-            //PlayerSystem.GetInstance().AddPlayer(PlayerTag.PLAYER_LEFT_DOWN, "2", true);
-            //PlayerSystem.GetInstance().AddPlayer(PlayerTag.PLAYER_LEFT_UP, "2", true);
-            //PlayerSystem.GetInstance().AddPlayer(PlayerTag.PLAYER_RIGHT_DOWN, "2", true);
-            //PlayerSystem.GetInstance().AddPlayer(PlayerTag.PLAYER_RIGHT_UP, "2", true);
-            TurnSystem.GetInstance().SetFirstTurn("1");
-
-            //SceneSystem.GetInstance().SceneEvent(SceneEventTag.SCENE_EVENT_OUT);
-            //SceneSystem.GetInstance().SceneEvent(SceneEventTag.SCENE_EVENT_SCALE_DOWN);
-            //NetworkSystem.GetInstance().SendServer("FIND-ROOM:" + "1");
-        }
+        
 
         StartCoroutine(SetTurnDirection());
     }
