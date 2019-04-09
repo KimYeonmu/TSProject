@@ -11,9 +11,12 @@ public class LoginScene : IScene
 {
     void Start()
     {
-        SceneCanvasGroup.alpha = 0;
+        Screen.SetResolution(720, 1280, false);
+        GameManager.GetInstance().FadeOutWhiteImg(0.5f);
 
-        StartCoroutine(AnimationSystem.GetInstance().FadeOutAnimation(SceneCanvasGroup, 3));
+        //SceneCanvasGroup.alpha = 0;
+        //
+        //StartCoroutine(AnimationSystem.GetInstance().FadeOutAnimation(SceneCanvasGroup, 3));
     }
 
     public void GoogleBtnPress()
@@ -40,7 +43,9 @@ public class LoginScene : IScene
 
     public override IEnumerator NextSceneAnimation()
     {
-        StartCoroutine(AnimationSystem.GetInstance().FadeInAnimation(SceneCanvasGroup, 3));
+        //StartCoroutine(AnimationSystem.GetInstance().FadeInAnimation(SceneCanvasGroup, 3));
+
+        GameManager.GetInstance().FadeInWhiteImg(0.5f);
 
         yield return new WaitForSeconds(1);
 

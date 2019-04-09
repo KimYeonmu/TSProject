@@ -21,10 +21,16 @@ public class PlayScene : IScene
 
     public override void Awake()
     {
+        GameManager.GetInstance().FadeOutWhiteImg(0.5f);
+
+        //SceneCanvasGroup.alpha = 0;
+        //
+        //StartCoroutine(AnimationSystem.GetInstance().FadeOutAnimation(SceneCanvasGroup, 1));
+
         base.Awake();
 
-        Screen.SetResolution(Screen.width, Screen.width * 16 / 9, true);
-
+        //Screen.SetResolution(Screen.width, Screen.width * 16 / 9, true);
+        Screen.SetResolution(720, 1280, false);
         //SceneSystem.GetInstance().SetScenePos(new Vector2(0, -20));
         //SceneSystem.GetInstance().SetSceneScale(Vector2.zero);
 
@@ -73,8 +79,8 @@ public class PlayScene : IScene
 
         TurnSystem.GetInstance().PlayerNowTurn.Subscribe(name =>
         {
-            if (!GameManager.GetInstance().IsStartGame)
-                return;
+            //if (!GameManager.GetInstance().IsStartGame)
+            //    return;
 
             var nowTurn = TurnSystem.GetInstance().GetNowTurnPlayerIndex();
 
@@ -168,11 +174,9 @@ public class PlayScene : IScene
 
     public IEnumerator StartScene()
     {
+        yield return new WaitForSeconds(1);
         DeckSystem.GetInstance().AllMoveCardDecktoDeck(DeckTag.ANIMATION_RIGHT_DECK, DeckTag.DRAW_DECK, 0, 0.05f, 0.5f);
-
         yield return new WaitForSeconds(5);
-
-        
 
         StartCoroutine(SetTurnDirection());
     }
@@ -182,17 +186,17 @@ public class PlayScene : IScene
         DeckSystem.GetInstance().ShuffleDeck(DeckTag.DRAW_DECK, 50);
 
         //StartCoroutine(PlayerSystem.GetInstance().ShareCard(1, 0));
-
+        //
         //yield return new WaitForSeconds(3);
-
+        //
         //TurnSystem.GetInstance().DecideFirstTurn();
-
+        //
         //PlayerSystem.GetInstance().AllPlayerCardReverse(0.5f);
-
+        //
         //yield return new WaitForSeconds(2);
-
+        //
         //PlayerSystem.GetInstance().AllPlayerCardMoveDeck(DeckTag.DRAW_DECK, true, 0.5f);
-
+        //
         //yield return new WaitForSeconds(2);
 
         yield return StartCoroutine(GameManager.GetInstance().StartGame());

@@ -14,8 +14,6 @@ public class TurnSystem : SingletonBase<TurnSystem>
 {
     public Queue<string> PlayerTurn = new Queue<string>();
 
-    
-
     public float TurnTimeOut = 30;
     public float TurnNowTime;
     public float TurnShowTime = 7;

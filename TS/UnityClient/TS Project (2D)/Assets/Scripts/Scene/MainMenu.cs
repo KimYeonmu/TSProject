@@ -20,10 +20,12 @@ public class MainMenu : IScene
 	// Use this for initialization
 	void Start ()
 	{
-	    SceneCanvasGroup.alpha = 0;
+        Screen.SetResolution(720, 1280, false);
+        //SceneCanvasGroup.alpha = 0;
+        //
+        //StartCoroutine(AnimationSystem.GetInstance().FadeOutAnimation(SceneCanvasGroup, 3));
 
-	    StartCoroutine(AnimationSystem.GetInstance().FadeOutAnimation(SceneCanvasGroup, 3));
-
+        GameManager.GetInstance().FadeOutWhiteImg(0.5f);
         ClickMiddleBtn(0);
     }
 	
@@ -117,7 +119,9 @@ public class MainMenu : IScene
 
         Destroy(Camera.main.GetComponent<AudioListener>());
 
-        NetworkSystem.GetInstance().SendServer("FIND-ROOM:"+PlayerSystem.GetInstance().MyPlayerId);
+        //NetworkSystem.GetInstance().SendServer("FIND-ROOM:"+PlayerSystem.GetInstance().MyPlayerId);
+
+        StartCoroutine(NextSceneAnimation());
     }
 
     public void SetCanvasAlpha(GameObject obj, float alpha)
@@ -151,8 +155,8 @@ public class MainMenu : IScene
 
     public override IEnumerator NextSceneAnimation()
     {
+        /*
         SceneManager.LoadSceneAsync("Assets/Scene/PlayScene.unity",LoadSceneMode.Additive);
-
         yield return new AsyncOperation();
 
         yield return new WaitForSeconds(5);
@@ -162,5 +166,16 @@ public class MainMenu : IScene
 
         Rigidbody2D body = BottomBtn.GetComponent<Rigidbody2D>();
         body.AddForce(Vector2.up * 200, ForceMode2D.Impulse);
+        */
+
+        yield return new WaitForSeconds(3);
+        //GameManager.GetInstance().FadeInWhiteImg(0.5f);
+
+        //StartCoroutine(AnimationSystem.GetInstance().FadeInAnimation(SceneCanvasGroup, 3));
+        //StartCoroutine(AnimationSystem.GetInstance().FadeInAnimation(RootObject, 3));
+
+        yield return new WaitForSeconds(1);
+
+        SceneManager.LoadScene("PlayScene");
     }
 }

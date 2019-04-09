@@ -13,6 +13,7 @@ public class LogoScene : IScene
     // Use this for initialization
     void Start()
     {
+        Screen.SetResolution(720, 1280, false);
         StartCoroutine(BounceBall());
         StartCoroutine(NextSceneAnimation());
     }
@@ -30,10 +31,11 @@ public class LogoScene : IScene
 
         yield return new WaitForSeconds(2);
 
-        StartCoroutine(AnimationSystem.GetInstance().FadeInAnimation(SceneCanvasGroup, 3));
-        StartCoroutine(AnimationSystem.GetInstance().FadeInAnimation(RootObject, 3));
+        //StartCoroutine(AnimationSystem.GetInstance().FadeInAnimation(SceneCanvasGroup, 3));
+        //StartCoroutine(AnimationSystem.GetInstance().FadeInAnimation(RootObject, 3));
+        GameManager.GetInstance().FadeInWhiteImg(0.5f);
 
-        yield return new WaitForSeconds(1);
+        yield return new WaitForSeconds(2);
 
         SceneManager.LoadScene("LoginScene");
     }

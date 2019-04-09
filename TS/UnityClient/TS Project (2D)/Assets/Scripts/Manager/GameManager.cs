@@ -1,15 +1,18 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using DG.Tweening;
 using UnityEngine;
-
+using UnityEngine.UI;
 
 
 public class GameManager : SingletonBase<GameManager>
 {
     public bool IsStartGame = false;
+    public Image WhiteImage;
 
     void Awake()
     {
+        WhiteImage = GameObject.FindWithTag("FadeImage").GetComponent<Image>();
     }
 
     // Use this for initialization
@@ -35,5 +38,20 @@ public class GameManager : SingletonBase<GameManager>
         IsStartGame = true;
 
         TurnSystem.GetInstance().StartTurn();
+    }
+
+    public void FadeInWhiteImg(float duration)
+    {
+        WhiteImage.color = new Color(1,1,1,0);
+        WhiteImage.gameObject.SetActive(true);
+        WhiteImage.DOColor(Color.white, duration);
+    }
+
+    public void FadeOutWhiteImg(float duration)
+    {
+        WhiteImage.color = Color.white;
+        WhiteImage.gameObject.SetActive(true);
+        WhiteImage.DOColor(new Color(1, 1, 1, 0), duration)
+            .OnComplete(()=>WhiteImage.gameObject.SetActive(false));
     }
 }

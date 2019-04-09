@@ -22,7 +22,7 @@ public class SceneSystem : SingletonBase<SceneSystem>
 
     public void Awake()
     {
-        DontDestroyOnLoad(transform);
+        //DontDestroyOnLoad(transform);
 
         ScreenPoint.x = Camera.main.pixelWidth;
         ScreenPoint.y = Camera.main.pixelHeight;
