@@ -39,23 +39,6 @@ public class SceneSystem : SingletonBase<SceneSystem>
     {
         switch (sceneEventTag)
         {
-            case SceneEventTag.SCENE_EVENT_IN:
-                break;
-
-            case SceneEventTag.SCENE_EVENT_OUT:
-                {
-                    SceneUi.transform.DOMove(Vector3.zero, 0.1f);
-
-                    RootObject.transform.DOMove(Vector3.zero, 0.1f);
-
-                    StartCoroutine(AnimationSystem.GetInstance().FadeOutAnimation(
-                        RootObject, 0.1f));
-
-                    StartCoroutine(AnimationSystem.GetInstance().FadeOutAnimation(
-                        SceneUiGroup, 0.1f));
-                }
-                break;
-
             case SceneEventTag.SCENE_EVENT_SCALE_DOWN:
                 {
                     SceneUi.transform.DOScale(Vector3.one, 0.1f);

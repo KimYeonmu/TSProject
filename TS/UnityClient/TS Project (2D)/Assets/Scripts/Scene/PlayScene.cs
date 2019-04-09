@@ -55,8 +55,6 @@ public class PlayScene : IScene
             PlayerSystem.GetInstance().AddPlayer(PlayerTag.PLAYER_RIGHT_UP, "4", true);
             TurnSystem.GetInstance().SetFirstTurn("1");
 
-            //SceneSystem.GetInstance().SceneEvent(SceneEventTag.SCENE_EVENT_OUT);
-            //SceneSystem.GetInstance().SceneEvent(SceneEventTag.SCENE_EVENT_SCALE_DOWN);
             //NetworkSystem.GetInstance().SendServer("FIND-ROOM:" + "1");
         }
 
