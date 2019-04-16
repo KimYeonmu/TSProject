@@ -15,7 +15,7 @@ public class SingletonBase<T> : MonoBehaviour where T : MonoBehaviour
     {
         if (_instance == null)
         {
-            _instance = FindObjectOfType (typeof(T)) as T;
+            _instance = FindObjectOfType(typeof(T)) as T;
 
             if (_instance == null)
             {
@@ -24,6 +24,5 @@ public class SingletonBase<T> : MonoBehaviour where T : MonoBehaviour
         }
 
         return _instance;
-        }
+    }
 }
-

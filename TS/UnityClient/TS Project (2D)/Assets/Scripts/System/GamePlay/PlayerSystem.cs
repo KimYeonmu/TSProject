@@ -123,8 +123,18 @@ public class PlayerSystem : SingletonBase<PlayerSystem>
         
         if (!player.IsPutCard)
         {
-            PlayerAddCard(DeckTag.DRAW_DECK, id, damage);
-            NetworkSystem.GetInstance().SendServer(string.Format("ADD-CARD:{0}:{1}", id, damage));
+            int cardCount = DeckSystem.GetInstance().GetCardCountWithDeck(DeckTag.DRAW_DECK);
+
+            if (cardCount - damage < 0)
+            {
+                PlayerAddCard(DeckTag.DRAW_DECK, id, cardCount);
+            }
+            else
+            {
+                PlayerAddCard(DeckTag.DRAW_DECK, id, damage);
+                NetworkSystem.GetInstance().SendServer(string.Format("ADD-CARD:{0}:{1}", id, damage));
+            }
+            
             return true;
         }
 

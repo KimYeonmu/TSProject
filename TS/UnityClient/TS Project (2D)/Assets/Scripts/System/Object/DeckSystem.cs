@@ -36,21 +36,6 @@ public class DeckSystem : SingletonBase<DeckSystem>
         Decks.Add(deck);
     }
 
-    public Deck GetDeck(DeckTag deckTag)
-    {
-        return Decks[(int)deckTag];
-    }
-
-    public Card GetTopCardWithDeck(DeckTag deckTag)
-    {
-        return Decks[(int) deckTag].GetTopCard();
-    }
-
-    public Card GetTopCardPeekWithDeck(DeckTag deckTag)
-    {
-        return Decks[(int) deckTag].GetTopCardPeek();
-    }
-
     public void AllMoveCardDecktoDeck(DeckTag deckTag1, DeckTag deckTag2, float delayTime, float intervalTime, float moveTime)
     {
         int tag1 = (int)deckTag1;
@@ -74,7 +59,37 @@ public class DeckSystem : SingletonBase<DeckSystem>
         Decks[(int)deckTag].ShuffleDeck(shuffleNum);
     }
 
-    
 
+    /// <summary>덱 오브젝트 반환 함수</summary>
+    /// <param name="deckTag">덱 tag</param>
+    /// <returns>덱 오브젝트</returns>
+    public Deck GetDeck(DeckTag deckTag)
+    {
+        return Decks[(int)deckTag];
+    }
+
+    /// <summary>덱의 맨 위에 있는 카드를 가져옴 </summary>
+    /// <param name="deckTag">덱 tag</param>
+    /// <returns>맨 위 카드</returns>
+    public Card GetTopCardWithDeck(DeckTag deckTag)
+    {
+        return Decks[(int)deckTag].GetTopCard();
+    }
+
+    /// <summary>덱의 맨 위에 있는 카드를 큐에서 빼지 않고 반환 </summary>
+    /// <param name="deckTag">덱 tag</param>
+    /// <returns>맨 위 카드</returns>
+    public Card GetTopCardPeekWithDeck(DeckTag deckTag)
+    {
+        return Decks[(int)deckTag].GetTopCardPeek();
+    }
+
+    /// <summary>덱이 가지고 있는 카드 수 반환 </summary>
+    /// <param name="deckTag">덱 tag</param>
+    /// <returns>카드 개수</returns>
+    public int GetCardCountWithDeck(DeckTag deckTag)
+    {
+        return Decks[(int) deckTag].DeckList.Count;
+    }
 }
 
