@@ -110,7 +110,8 @@ public class NetworkSystem : SingletonBase<NetworkSystem>
                     for (int j = 0; j < text.Length - 1; j++)
                     {
                         if (i+1 >= text.Length) i -= (text.Length-1);
-                        PlayerSystem.GetInstance().AddPlayer(PlayerTag.PLAYER_BOTTOM + j, text[1 + i], false);                        
+                        PlayerSystem.GetInstance().AddPlayer(PlayerTag.PLAYER_BOTTOM + j, text[1 + i], false);
+                        TurnSystem.GetInstance().AddTurnPlayer(text[1 + i]);
                         i++;
                     }
 
@@ -125,7 +126,7 @@ public class NetworkSystem : SingletonBase<NetworkSystem>
         else if (text[0].Equals("ADD-CARD"))
         {
             int cardNum = Convert.ToInt32(text[2]);
-            PlayerSystem.GetInstance().PlayerAddCard(DeckTag.DRAW_DECK, text[1], cardNum);
+            PlayerSystem.GetInstance().PlayerAddCardWithDeck(DeckTag.DRAW_DECK, text[1], cardNum);
         }
         else if (text[0].Equals("PUT-CARD"))
         {

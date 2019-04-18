@@ -23,6 +23,7 @@ public class Player : MonoBehaviour
     public bool IsAi;
 
     public int HoldCardNum;
+    public int MaxCardNum;
 
     public PlayerTag PlayerPlace;
     public List<Card> PlayerCard = new List<Card>();
@@ -47,7 +48,7 @@ public class Player : MonoBehaviour
 
         card.SetSortingOrder(PlayerCard.Count);
 
-        if (PlayerCard.Count > 20)
+        if (PlayerCard.Count > MaxCardNum)
             IsDie = true;
 
         RePosition();

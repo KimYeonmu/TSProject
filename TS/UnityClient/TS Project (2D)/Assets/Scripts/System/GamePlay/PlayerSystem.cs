@@ -19,6 +19,10 @@ public class PlayerSystem : SingletonBase<PlayerSystem>
 
     }
 
+    /// <summary>플레이어 추가 </summary>
+    /// <param name="playerTag">플레이어 위치 tag</param>
+    /// <param name="id">플레이어 id</param>
+    /// <param name="isAi">ai 인지?</param>
     public void AddPlayer(PlayerTag playerTag, string id, bool isAi)
     {
         Player player = gameObject.AddComponent<Player>();
@@ -26,23 +30,25 @@ public class PlayerSystem : SingletonBase<PlayerSystem>
         player.IsAi = isAi;
         player.PlayerId = id;
         Players.Add(player);
-
-        TurnSystem.GetInstance().AddTurnPlayer(id);
     }
 
-    public void PlayerAddCard(DeckTag deckTag, string playerName, int cardNum)
+    /// <summary>해당 id를 가진 플레이어에게 카드 추가 </summary>
+    /// <param name="deckTag">카드를 가져올 덱</param>
+    /// <param name="playerName">플레이어 이름</param>
+    /// <param name="cardNum">카드 갯수</param>
+    public void PlayerAddCardWithDeck(DeckTag deckTag, string playerId, int cardNum)
     {
         Observable.Interval(TimeSpan.FromSeconds(0.05f))
             .Take(cardNum)
             .Subscribe(_ =>
             {
-                var player = Players.Find(p =>p.PlayerId == playerName);
+                var player = Players.Find(p =>p.PlayerId == playerId);
 
-                var card = DeckSystem.GetInstance().GetTopCardWithDeck(DeckTag.DRAW_DECK);
+                var card = DeckSystem.GetInstance().GetTopCardWithDeck(deckTag);
 
                 if (player == null)
                 {
-                    Debug.Log("Player not found : " + playerName);
+                    Debug.Log("Player not found : " + playerId);
                     return;
                 }
 
@@ -53,14 +59,22 @@ public class PlayerSystem : SingletonBase<PlayerSystem>
             });
     }
 
-    public void PlayerPutCard(DeckTag deckTag, string playerName, int cardListIndex, float reverseTime = 0.5f)
+    /// <summary>플레이어가 카드를 덱에 놓음 </summary>
+    /// <param name="deckTag">카드를 놓을 덱</param>
+    /// <param name="playerName">플레이어 id</param>
+    /// <param name="cardListIndex">플레이어의 카드 index</param>
+    /// <param name="reverseTime"></param>
+    public void PlayerPutCard(DeckTag deckTag, string playerId, int cardListIndex, float reverseTime = 0.5f)
     {
-        var player = Players.Find(p => p.PlayerId == playerName);
+        var player = Players.Find(p => p.PlayerId == playerId);
 
         AlertSystem.GetInstance().AddAlerts(player.PlayerCard[cardListIndex]);
         player.PutCard(deckTag,cardListIndex,false,reverseTime);
     }
 
+    /// <summary>플레이어의 모든 카드를 뒤집음 </summary>
+    /// <param name="playerIndex">플레이어의 index</param>
+    /// <param name="reverseTime">뒤집는 애니메이션 지속시간</param>
     public void PlayerCardReverse(int playerIndex, float reverseTime)
     {
         Players[playerIndex].AllCardReverse(reverseTime);
@@ -113,7 +127,7 @@ public class PlayerSystem : SingletonBase<PlayerSystem>
         }
     }
 
-    public bool CheckPutCardNowTurn(int playerIndex, bool IsAttack, int AttackDamage)
+    public bool CheckPutCardNowTurn(int playerIndex, bool IsAttack, int AttackDamage) 
     {
         var player = Players[playerIndex];
         var id = Players[playerIndex].PlayerId;
@@ -127,11 +141,11 @@ public class PlayerSystem : SingletonBase<PlayerSystem>
 
             if (cardCount - damage < 0)
             {
-                PlayerAddCard(DeckTag.DRAW_DECK, id, cardCount);
+                PlayerAddCardWithDeck(DeckTag.DRAW_DECK, id, cardCount);
             }
             else
             {
-                PlayerAddCard(DeckTag.DRAW_DECK, id, damage);
+                PlayerAddCardWithDeck(DeckTag.DRAW_DECK, id, damage);
                 NetworkSystem.GetInstance().SendServer(string.Format("ADD-CARD:{0}:{1}", id, damage));
             }
             

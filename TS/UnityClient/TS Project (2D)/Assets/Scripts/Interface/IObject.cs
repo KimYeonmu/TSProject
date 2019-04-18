@@ -51,5 +51,4 @@ public class IObject : MonoBehaviour
     public Transform GetParent() { return ObjTransform.parent; }
 
     #endregion getter
-
 }
