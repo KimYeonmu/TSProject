@@ -59,6 +59,33 @@ public class PlayerSystem : SingletonBase<PlayerSystem>
             });
     }
 
+    /// <summary>해당 id를 가진 플레이어에게 카드 추가 </summary>
+    /// <param name="deckTag">카드를 가져올 덱</param>
+    /// <param name="playerName">플레이어 이름</param>
+    /// <param name="cardNum">카드 갯수</param>
+    public void PlayerAddCardWithDeck(DeckTag deckTag, int playerIdx, int cardNum)
+    {
+        Observable.Interval(TimeSpan.FromSeconds(0.05f))
+            .Take(cardNum)
+            .Subscribe(_ =>
+            {
+                var player = Players[playerIdx];
+
+                if (player == null)
+                {
+                    Debug.Log("Player not found : " + Players[playerIdx].PlayerId);
+                    return;
+                }
+
+                var card = DeckSystem.GetInstance().GetTopCardWithDeck(deckTag);
+
+                if (player.PlayerId == MyPlayerId)
+                    CardAnimationSystem.GetInstance().ReverseAnimation(card, 0.5f);
+
+                player.AddPlayerCard(card);
+            });
+    }
+
     /// <summary>플레이어가 카드를 덱에 놓음 </summary>
     /// <param name="deckTag">카드를 놓을 덱</param>
     /// <param name="playerName">플레이어 id</param>
@@ -105,7 +132,7 @@ public class PlayerSystem : SingletonBase<PlayerSystem>
         }
     }
 
-    public IEnumerator ShareCard(int cardNum, float shareDelay)
+    public IEnumerator ShareCard(DeckTag deck, int cardNum, float shareDelay)
     {
         WaitForSeconds delay = new WaitForSeconds(shareDelay);
 
@@ -115,7 +142,7 @@ public class PlayerSystem : SingletonBase<PlayerSystem>
         {
             for (int j = 0; j < cardNum; j++)
             {
-                Card card = DeckSystem.GetInstance().GetTopCardWithDeck(DeckTag.DRAW_DECK);
+                Card card = DeckSystem.GetInstance().GetTopCardWithDeck(deck);
 
                 if (tempTurn + i >= Players.Count)
                     tempTurn -= Players.Count;
@@ -127,32 +154,5 @@ public class PlayerSystem : SingletonBase<PlayerSystem>
         }
     }
 
-    public bool CheckPutCardNowTurn(int playerIndex, bool IsAttack, int AttackDamage) 
-    {
-        var player = Players[playerIndex];
-        var id = Players[playerIndex].PlayerId;
-        var damage = IsAttack ? AttackDamage : 1;
-
-        //Debug.Log("player : "+id + " isput : " + player.IsPutCard + " Damage : " + damage + " isattack " + IsAttack);
-        
-        if (!player.IsPutCard)
-        {
-            int cardCount = DeckSystem.GetInstance().GetCardCountWithDeck(DeckTag.DRAW_DECK);
-
-            if (cardCount - damage < 0)
-            {
-                PlayerAddCardWithDeck(DeckTag.DRAW_DECK, id, cardCount);
-            }
-            else
-            {
-                PlayerAddCardWithDeck(DeckTag.DRAW_DECK, id, damage);
-                NetworkSystem.GetInstance().SendServer(string.Format("ADD-CARD:{0}:{1}", id, damage));
-            }
-            
-            return true;
-        }
-
-        player.IsPutCard = false;
-        return false;
-    }
+    
 }

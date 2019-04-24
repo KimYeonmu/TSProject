@@ -60,8 +60,8 @@ public class AiSystem : SingletonBase<AiSystem>
                 player.PlayerCard[i],
                 player.IsPutCard))
             {
-                Debug.Log("compare d: " + card.GetCardIndex() + card.GetShapeIndex());
-                Debug.Log("compare p: " + player.PlayerCard[i].GetCardIndex() + player.PlayerCard[i].GetShapeIndex());
+                //Debug.Log("compare d: " + card.GetCardIndex() + card.GetShapeIndex());
+                //Debug.Log("compare p: " + player.PlayerCard[i].GetCardIndex() + player.PlayerCard[i].GetShapeIndex());
                 cardIndexs.Add(i);
             }
         }

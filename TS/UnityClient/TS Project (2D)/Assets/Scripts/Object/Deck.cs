@@ -63,7 +63,7 @@ public class Deck : IObject
         DeckList[random2] = temp;
     }
 
-    public void AllMoveCardDecktoDeck(Deck moveDeck, float intervalTime, float moveTime)
+    public void AllMoveCardDecktoDeck(Deck moveDeck, float intervalTime, float moveTime, Action complete = null)
     {
         Observable.Interval(TimeSpan.FromSeconds(intervalTime))
             .Take(DeckList.Count)
@@ -83,6 +83,8 @@ public class Deck : IObject
                 () =>
                 {
                     DeckList.Clear();
+                    if (complete != null )
+                        complete();
                 });
     }
 
@@ -100,7 +102,6 @@ public class Deck : IObject
                     DeckList[DeckList.Count - 1],
                     moveTime);
 
-                Debug.Log("remove card deck");
                 DeckList.RemoveAt(DeckList.Count - 1);
             });
     }

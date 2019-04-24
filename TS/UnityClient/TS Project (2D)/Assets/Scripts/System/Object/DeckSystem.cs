@@ -36,13 +36,13 @@ public class DeckSystem : SingletonBase<DeckSystem>
         Decks.Add(deck);
     }
 
-    public void AllMoveCardDecktoDeck(DeckTag deckTag1, DeckTag deckTag2, float delayTime, float intervalTime, float moveTime)
+    public void AllMoveCardDecktoDeck(DeckTag deckTag1, DeckTag deckTag2, float delayTime, float intervalTime, float moveTime, Action complete = null)
     {
         int tag1 = (int)deckTag1;
         int tag2 = (int)deckTag2;
 
         Observable.Timer(TimeSpan.FromSeconds(delayTime))
-            .Subscribe(_ => Decks[tag1].AllMoveCardDecktoDeck(Decks[tag2], intervalTime, moveTime));
+            .Subscribe(_ => Decks[tag1].AllMoveCardDecktoDeck(Decks[tag2], intervalTime, moveTime, complete));
     }
 
     public void MoveCardDecktoDeck(DeckTag deckTag1, DeckTag deckTag2, float delayTime, int cardNum, float intervalTime, float moveTime)

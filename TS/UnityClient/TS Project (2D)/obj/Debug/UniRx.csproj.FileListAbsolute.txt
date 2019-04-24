@@ -606,3 +606,5 @@ C:\Unity\Personal\TSProject\TS\UnityClient\TS Project (2D)\Temp\bin\Debug\Google
 C:\Unity\Personal\TSProject\TS\UnityClient\TS Project (2D)\Temp\bin\Debug\Google.JarResolver_v1.2.102.0.dll
 C:\Unity\Personal\TSProject\TS\UnityClient\TS Project (2D)\Temp\bin\Debug\Google.VersionHandler.dll
 C:\Unity\Personal\TSProject\TS\UnityClient\TS Project (2D)\Temp\bin\Debug\Google.VersionHandlerImpl_v1.2.102.0.dll
+C:\Unity\Personal\TSProject\TS\UnityClient\TS Project (2D)\Temp\bin\Debug\UnityEngine.SpatialTrackingModule.dll
+C:\Unity\Personal\TSProject\TS\UnityClient\TS Project (2D)\Temp\bin\Debug\UnityEngine.SpatialTrackingModule.xml

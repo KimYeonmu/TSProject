@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Runtime.CompilerServices;
 using DG.Tweening;
 using UniRx;
 using UniRx.Triggers;
@@ -23,14 +24,10 @@ public class PlayScene : IScene
     {
         GameManager.GetInstance().FadeOutWhiteImg(0.5f);
 
-        //SceneCanvasGroup.alpha = 0;
-        //
-        //StartCoroutine(AnimationSystem.GetInstance().FadeOutAnimation(SceneCanvasGroup, 1));
-
         base.Awake();
 
         //Screen.SetResolution(Screen.width, Screen.width * 16 / 9, true);
-        Screen.SetResolution(720, 1280, false);
+        //Screen.SetResolution(720, 1280, false);
         //SceneSystem.GetInstance().SetScenePos(new Vector2(0, -20));
         //SceneSystem.GetInstance().SetSceneScale(Vector2.zero);
 
@@ -86,6 +83,7 @@ public class PlayScene : IScene
             //if (!GameManager.GetInstance().IsStartGame)
             //    return;
 
+            Debug.Log("Now turn : " + name);
             var nowTurn = TurnSystem.GetInstance().GetNowTurnPlayerIndex();
 
             if (nowTurn != PlayerSystem.GetInstance().MyPlayerIndex)
@@ -98,16 +96,34 @@ public class PlayScene : IScene
             if (!GameManager.GetInstance().IsStartGame)
                 return;
 
-            if (finish && GameManager.GetInstance().IsStartGame)
+            if (finish)
             {
                 var nowTurn = TurnSystem.GetInstance().GetNowTurnPlayerIndex();
 
                 Observable.Timer(TimeSpan.FromSeconds(1))
                     .Subscribe(_ =>
                     {
-                        if (PlayerSystem.GetInstance().CheckPutCardNowTurn(nowTurn,
-                            RuleSystem.GetInstance().IsAttackTurn,
-                            RuleSystem.GetInstance().SaveAttackDamage))
+                        // TODO : Is Put 을 false로 바꿔줘야함
+                        var isPut = PlayerSystem.GetInstance().Players[nowTurn].IsPutCard;
+                        var damage = RuleSystem.GetInstance().GetAttackDamage(isPut);
+
+                        if (damage > DeckSystem.GetInstance().GetCardCountWithDeck(DeckTag.DRAW_DECK))
+                        {
+                            DeckSystem.GetInstance().ShuffleDeck(DeckTag.PUT_DECK, 1000);
+                            DeckSystem.GetInstance().AllMoveCardDecktoDeck(
+                                DeckTag.PUT_DECK,
+                                DeckTag.DRAW_DECK, 
+                                0,
+                                0.01f,
+                                0.1f,
+                                () => PlayerSystem.GetInstance().PlayerAddCardWithDeck(DeckTag.DRAW_DECK, nowTurn, damage));
+                        }
+                        else
+                        {
+                            PlayerSystem.GetInstance().PlayerAddCardWithDeck(DeckTag.DRAW_DECK, nowTurn, damage);
+                        }
+
+                        if (damage != 0)
                         {
                             RuleSystem.GetInstance().IsAttackTurn = false;
                             RuleSystem.GetInstance().SaveAttackDamage = 0;
@@ -187,7 +203,7 @@ public class PlayScene : IScene
 
     public IEnumerator SetTurnDirection()
     {
-        DeckSystem.GetInstance().ShuffleDeck(DeckTag.DRAW_DECK, 50);
+        DeckSystem.GetInstance().ShuffleDeck(DeckTag.DRAW_DECK, 1000);
 
         //StartCoroutine(PlayerSystem.GetInstance().ShareCard(1, 0));
         //

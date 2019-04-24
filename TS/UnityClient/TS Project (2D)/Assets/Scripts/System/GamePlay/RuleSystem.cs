@@ -155,5 +155,15 @@ public class RuleSystem : SingletonBase<RuleSystem>
             SaveAttackDamage += 7;
         }
     }
+
+    public int GetAttackDamage(bool isPutCard)
+    {
+        var damage = IsAttackTurn ? SaveAttackDamage : 1;
+
+        if (!isPutCard)
+            return damage;
+
+        return 0;
+    }
 }
 
