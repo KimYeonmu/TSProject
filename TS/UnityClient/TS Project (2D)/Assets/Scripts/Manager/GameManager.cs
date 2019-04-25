@@ -23,7 +23,7 @@ public class GameManager : SingletonBase<GameManager>
 
     public IEnumerator StartGame()
     {
-        StartCoroutine(PlayerSystem.GetInstance().ShareCard(DeckTag.DRAW_DECK, 6, 0.1f));
+        StartCoroutine(PlayerSystem.GetInstance().ShareCard(DeckTag.DRAW_DECK, 12, 0.1f));
 
         yield return new WaitForSeconds(PlayerSystem.GetInstance().Players.Count * 1);
 

@@ -105,4 +105,31 @@ public class Deck : IObject
                 DeckList.RemoveAt(DeckList.Count - 1);
             });
     }
+
+    public void MoveCardDecktoDeck(Deck moveDeck, int startCardIdx, int cardNum, float intervalTime, float moveTime, Action complete = null)
+    {
+        Observable.Interval(TimeSpan.FromSeconds(intervalTime))
+            .Take(cardNum)
+            .Subscribe(i =>
+            {
+                int idx = startCardIdx;
+                moveDeck.AddCard(DeckList[idx]);
+
+                DeckList[idx].transform.DOMove(moveDeck.GetPosition(), moveTime);
+
+                CardAnimationSystem.GetInstance().ReverseAnimation(
+                    DeckList[idx],
+                    moveTime);
+
+                DeckList.RemoveAt(idx);
+            }, () =>
+            {
+                for (int i = 0; i < DeckList.Count; i ++)
+                    DeckList[i].SetSortingOrder(i);
+
+                if (complete != null)
+                    complete();
+            });
+    }
+
 }

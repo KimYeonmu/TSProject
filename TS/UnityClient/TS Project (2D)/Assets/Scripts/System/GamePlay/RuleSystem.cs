@@ -6,6 +6,7 @@ public class RuleSystem : SingletonBase<RuleSystem>
 {
     public bool IsAttackTurn;
     public int SaveAttackDamage = 0;
+    public int PlayerMaxCard = 20;
 
     public bool CompareCard(Card deckCard, Card putCard, bool isPutCard)
     {
@@ -14,7 +15,6 @@ public class RuleSystem : SingletonBase<RuleSystem>
 
         var putShape = putCard.GetShapeIndex();
         var putCardIndex = putCard.GetCardIndex();
-
 
         if (isPutCard)
         {
@@ -51,11 +51,11 @@ public class RuleSystem : SingletonBase<RuleSystem>
         {
             if (deckShape == putShape || deckCardIndex == putCardIndex)
             {
-                if (putCardIndex == CardTag.Q)
-                    TurnSystem.GetInstance().ReverseTurn();
-
-                if (putCardIndex == CardTag.J)
-                    TurnSystem.GetInstance().JumpTurn();
+                //if (putCardIndex == CardTag.Q)
+                //    TurnSystem.GetInstance().ReverseTurn();
+                //
+                //if (putCardIndex == CardTag.J)
+                //    TurnSystem.GetInstance().JumpTurn();
 
                 return true;
             }
@@ -165,5 +165,6 @@ public class RuleSystem : SingletonBase<RuleSystem>
 
         return 0;
     }
+
 }
 

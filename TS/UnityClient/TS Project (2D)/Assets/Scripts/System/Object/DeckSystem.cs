@@ -54,6 +54,15 @@ public class DeckSystem : SingletonBase<DeckSystem>
             .Subscribe(_ => Decks[tag1].MoveCardDecktoDeck(Decks[tag2], cardNum, intervalTime, moveTime));
     }
 
+    public void MoveCardDecktoDeck(DeckTag deckTag1, DeckTag deckTag2, float delayTime, int startCardIdx, int cardNum, float intervalTime, float moveTime, Action complete = null)
+    {
+        int tag1 = (int)deckTag1;
+        int tag2 = (int)deckTag2;
+
+        Observable.Timer(TimeSpan.FromSeconds(delayTime))
+            .Subscribe(_ => Decks[tag1].MoveCardDecktoDeck(Decks[tag2], startCardIdx, cardNum, intervalTime, moveTime, complete));
+    }
+
     public void ShuffleDeck(DeckTag deckTag, int shuffleNum)
     {
         Decks[(int)deckTag].ShuffleDeck(shuffleNum);

@@ -32,6 +32,11 @@ public class PlayerSystem : SingletonBase<PlayerSystem>
         Players.Add(player);
     }
 
+    public void RemovePlayer(int playerIdx)
+    {
+        Players.RemoveAt(playerIdx);
+    }
+
     /// <summary>해당 id를 가진 플레이어에게 카드 추가 </summary>
     /// <param name="deckTag">카드를 가져올 덱</param>
     /// <param name="playerName">플레이어 이름</param>
@@ -154,5 +159,9 @@ public class PlayerSystem : SingletonBase<PlayerSystem>
         }
     }
 
-    
+
+    public int GetPlayerCardCount(int playerIdx)
+    {
+        return Players[playerIdx].PlayerCard.Count;
+    }
 }
