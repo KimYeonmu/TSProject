@@ -114,8 +114,6 @@ public class NetworkSystem : SingletonBase<NetworkSystem>
                         TurnSystem.GetInstance().AddTurnPlayer(text[1 + i]);
                         i++;
                     }
-
-                    PlayerSystem.GetInstance().MyPlayerIndex = 0;
                     break;
                 }
             }

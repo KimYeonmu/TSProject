@@ -81,6 +81,26 @@ public class TurnSystem : SingletonBase<TurnSystem>
         PlayerTurn.Enqueue(playerName);
     }
 
+    /// <summary>Turn Queue에 플레이어 제거 </summary>
+    /// <param name="playerName">플레이어 이름</param>
+    public void RemoveTurnPlayer(string playerName)
+    {
+        var count = PlayerTurn.Count;
+
+        for (int i = 0; i < count; i++)
+        {
+            if (playerName == PlayerTurn.Peek())
+            {
+                PlayerTurn.Dequeue();
+
+                if (PlayerNowTurn.Value == playerName)
+                    PlayerNowTurn.Value = PlayerTurn.Peek();
+            }
+
+            PlayerTurn.Enqueue(PlayerTurn.Dequeue());
+        }
+    }
+
     /// <summary>턴을 시작하는 함수 </summary>
     public void StartTurn()
     {
@@ -110,14 +130,23 @@ public class TurnSystem : SingletonBase<TurnSystem>
     /// <summary>턴을 하나 건너뜀 </summary>
     public void JumpTurn()
     {
-        PlayerTurn.Enqueue(PlayerTurn.Dequeue());
+        //PlayerTurn.Enqueue(PlayerTurn.Dequeue());
+
+        foreach (var turn in PlayerTurn)
+        {
+            Debug.Log(turn + " -> ");
+        }
     }
 
     /// <summary>턴을 반대로 바꿈 </summary>
     public void ReverseTurn()
     {
-        //PlayerTurn.Enqueue(PlayerTurn.Dequeue());
-        PlayerTurn = new Queue<string>(PlayerTurn.Reverse());
+        //PlayerTurn = new Queue<string>(PlayerTurn.Reverse());
+
+        foreach (var turn in PlayerTurn)
+        {
+            Debug.Log(turn + " -> ");
+        }
     }
 
     /// <summary>첫 번째 턴을 결정하는 함수 </summary>

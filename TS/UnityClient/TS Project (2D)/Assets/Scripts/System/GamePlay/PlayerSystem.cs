@@ -11,7 +11,6 @@ public class PlayerSystem : SingletonBase<PlayerSystem>
 {
     [HideInInspector] public List<Player> Players = new List<Player>();
 
-    public int MyPlayerIndex;
     public string MyPlayerId;
 
     public void Start()
@@ -163,5 +162,21 @@ public class PlayerSystem : SingletonBase<PlayerSystem>
     public int GetPlayerCardCount(int playerIdx)
     {
         return Players[playerIdx].PlayerCard.Count;
+    }
+
+    public string GetPlayerId(int playerIdx)
+    {
+        return Players[playerIdx].PlayerId;
+    }
+
+    public int GetMyPlayerIndex()
+    {
+        for (int i = 0; i < Players.Count; i++)
+        {
+            if (MyPlayerId == Players[i].PlayerId)
+                return i;
+        }
+
+        return -1;
     }
 }

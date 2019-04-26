@@ -71,12 +71,9 @@ public class PlayScene : IScene
                 if (!GameManager.GetInstance().IsStartGame)
                     return;
 
-                var nowTurn = TurnSystem.GetInstance().GetNowTurnPlayerIndex();
+                var nowId = TurnSystem.GetInstance().PlayerNowTurn.Value;
 
-                if (nowTurn < 0)
-                    return;
-
-                if (nowTurn == PlayerSystem.GetInstance().MyPlayerIndex)
+                if (nowId == PlayerSystem.GetInstance().MyPlayerId)
                     TouchUpdate();
             });
 
@@ -86,9 +83,9 @@ public class PlayScene : IScene
             //    return;
 
             Debug.Log("Now turn : " + name);
-            var nowTurn = TurnSystem.GetInstance().GetNowTurnPlayerIndex();
+            var nowTurnId = TurnSystem.GetInstance().PlayerNowTurn.Value;
 
-            if (nowTurn != PlayerSystem.GetInstance().MyPlayerIndex)
+            if (nowTurnId != PlayerSystem.GetInstance().MyPlayerId)
                 AiSystem.GetInstance().IsStartAi.Value = true;
 
         });
@@ -108,36 +105,41 @@ public class PlayScene : IScene
                         var isPut = PlayerSystem.GetInstance().Players[nowTurn].IsPutCard;
                         var damage = RuleSystem.GetInstance().GetAttackDamage(isPut);
                         var playerCard = PlayerSystem.GetInstance().GetPlayerCardCount(nowTurn);
+                        var playerId = PlayerSystem.GetInstance().GetPlayerId(nowTurn);
 
                         if (damage + playerCard > RuleSystem.GetInstance().PlayerMaxCard)
                         {
-                            var isMyTurn = PlayerSystem.GetInstance().MyPlayerIndex == nowTurn ? true : false;
+                            var isMyTurn = PlayerSystem.GetInstance().MyPlayerId == playerId ? true : false;
                             PlayerSystem.GetInstance().PlayerCardMoveDeck(DeckTag.DRAW_DECK, nowTurn, isMyTurn, 0.1f);
-                            PlayerSystem.GetInstance().RemovePlayer(nowTurn);
                             DeckSystem.GetInstance().ShuffleDeck(DeckTag.DRAW_DECK, 1000);
-                            NextTurn(nowTurn, damage);
+                            
+                            TurnSystem.GetInstance().NextTurn();
+                            RuleSystem.GetInstance().IsAttackTurn = false;
+                            RuleSystem.GetInstance().SaveAttackDamage = 0;
+
+                            PlayerSystem.GetInstance().RemovePlayer(nowTurn);
+                            TurnSystem.GetInstance().RemoveTurnPlayer(playerId);
+
+                            OnTurnEndBtn();
                             return;
                         }
 
-                        Action addCardAction = () =>
-                        {
-                            DeckSystem.GetInstance().ShuffleDeck(DeckTag.DRAW_DECK, 1000);
-                            PlayerSystem.GetInstance().PlayerAddCardWithDeck(DeckTag.DRAW_DECK, nowTurn, damage);
-                            NextTurn(nowTurn, damage);
-                        };
+                        Action addCardAction = () => NextTurn(nowTurn, damage);
+                        
                         
                         if (damage > DeckSystem.GetInstance().GetCardCountWithDeck(DeckTag.DRAW_DECK))
                         {
                             var count = DeckSystem.GetInstance().GetCardCountWithDeck(DeckTag.PUT_DECK);
 
+                            Debug.Log("move put -> draw : " + count);
                             DeckSystem.GetInstance().MoveCardDecktoDeck(
                                 DeckTag.PUT_DECK,
                                 DeckTag.DRAW_DECK,
                                 0,
                                 0,
                                 count - 1,
-                                1,
-                                1,
+                                0.1f,
+                                0.1f,
                                 addCardAction);
                         }
                         else
@@ -154,6 +156,8 @@ public class PlayScene : IScene
     {
         if (damage != 0)
         {
+            DeckSystem.GetInstance().ShuffleDeck(DeckTag.DRAW_DECK, 1000);
+            PlayerSystem.GetInstance().PlayerAddCardWithDeck(DeckTag.DRAW_DECK, playerIdx, damage);
             RuleSystem.GetInstance().IsAttackTurn = false;
             RuleSystem.GetInstance().SaveAttackDamage = 0;
         }
@@ -162,12 +166,7 @@ public class PlayScene : IScene
 
         PlayerSystem.GetInstance().Players[playerIdx].IsPutCard = false;
 
-        if (playerIdx == PlayerSystem.GetInstance().MyPlayerIndex)
-        {
-            Debug.Log("btn inter");
-            Button btn = TurnEndBtnObject.GetComponent<Button>();
-            btn.interactable = true;
-        }
+        OnTurnEndBtn();
     }
 
     public void TouchUpdate()
@@ -176,7 +175,11 @@ public class PlayScene : IScene
             return;
 
         Vector2 pos = Vector2.zero;
-        int myPlayerIndex = PlayerSystem.GetInstance().MyPlayerIndex;
+        var myPlayerIdx = PlayerSystem.GetInstance().GetMyPlayerIndex();
+
+        if (myPlayerIdx < 0)
+            return;
+        //int myPlayerIndex = PlayerSystem.GetInstance().MyPlayerIndex;
 
         //for (int i = 0; i < Input.touchCount; i++)
         //{
@@ -207,17 +210,17 @@ public class PlayScene : IScene
 
         if (Input.GetMouseButtonDown(0))
         {
-            PlayerSystem.GetInstance().Players[myPlayerIndex].SelectCard_Began(pos);
+            PlayerSystem.GetInstance().Players[myPlayerIdx].SelectCard_Began(pos);
         }
 
         if (Input.GetMouseButton(0))
         {
-            PlayerSystem.GetInstance().Players[myPlayerIndex].SelectCard_Moved(pos);
+            PlayerSystem.GetInstance().Players[myPlayerIdx].SelectCard_Moved(pos);
         }
 
         if (Input.GetMouseButtonUp(0))
         {
-            PlayerSystem.GetInstance().Players[myPlayerIndex].SelectCard_Ended();
+            PlayerSystem.GetInstance().Players[myPlayerIdx].SelectCard_Ended();
         }
     }
 
@@ -257,12 +260,24 @@ public class PlayScene : IScene
     }
 
 
-    #region PlayScene Btn Press Function
+    #region PlayScene Btn Function
+
+    public void OnTurnEndBtn()
+    {
+        var nowTurnId = TurnSystem.GetInstance().PlayerNowTurn.Value;
+        if (nowTurnId == PlayerSystem.GetInstance().MyPlayerId)
+        {
+            Debug.Log("btn inter");
+            Button btn = TurnEndBtnObject.GetComponent<Button>();
+            btn.interactable = true;
+        }
+    }
 
     public void TurnEndBtnPress()
     {
-        if (TurnSystem.GetInstance().GetNowTurnPlayerIndex() ==
-            PlayerSystem.GetInstance().MyPlayerIndex)
+        var nowId = TurnSystem.GetInstance().PlayerNowTurn.Value;
+
+        if (nowId == PlayerSystem.GetInstance().MyPlayerId)
         {
             Button btn = TurnEndBtnObject.GetComponent<Button>();
             btn.interactable = false;

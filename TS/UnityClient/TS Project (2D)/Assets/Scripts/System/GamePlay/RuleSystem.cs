@@ -20,7 +20,7 @@ public class RuleSystem : SingletonBase<RuleSystem>
         {
             if (deckCardIndex == putCardIndex ||
                 deckCardIndex == CardTag.K && deckShape == putShape)
-            {
+            {   
                 if (putCardIndex == CardTag.Q)
                     TurnSystem.GetInstance().ReverseTurn();
 
@@ -51,11 +51,11 @@ public class RuleSystem : SingletonBase<RuleSystem>
         {
             if (deckShape == putShape || deckCardIndex == putCardIndex)
             {
-                //if (putCardIndex == CardTag.Q)
-                //    TurnSystem.GetInstance().ReverseTurn();
-                //
-                //if (putCardIndex == CardTag.J)
-                //    TurnSystem.GetInstance().JumpTurn();
+                if (putCardIndex == CardTag.Q)
+                    TurnSystem.GetInstance().ReverseTurn();
+                
+                if (putCardIndex == CardTag.J)
+                    TurnSystem.GetInstance().JumpTurn();
 
                 return true;
             }

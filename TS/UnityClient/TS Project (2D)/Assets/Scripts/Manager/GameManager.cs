@@ -31,7 +31,7 @@ public class GameManager : SingletonBase<GameManager>
 
         yield return new WaitForSeconds(1);
 
-        PlayerSystem.GetInstance().PlayerCardReverse(PlayerSystem.GetInstance().MyPlayerIndex, 0.5f);
+        PlayerSystem.GetInstance().PlayerCardReverse(PlayerSystem.GetInstance().GetMyPlayerIndex(), 0.5f);
 
         yield return new WaitForSeconds(1);
 
@@ -40,9 +40,11 @@ public class GameManager : SingletonBase<GameManager>
         TurnSystem.GetInstance().StartTurn();
     }
 
+    #region Fade In Out Img Function
+
     public void FadeInWhiteImg(float duration)
     {
-        WhiteImage.color = new Color(1,1,1,0);
+        WhiteImage.color = new Color(1, 1, 1, 0);
         WhiteImage.gameObject.SetActive(true);
         WhiteImage.DOColor(Color.white, duration);
     }
@@ -52,6 +54,9 @@ public class GameManager : SingletonBase<GameManager>
         WhiteImage.color = Color.white;
         WhiteImage.gameObject.SetActive(true);
         WhiteImage.DOColor(new Color(1, 1, 1, 0), duration)
-            .OnComplete(()=>WhiteImage.gameObject.SetActive(false));
+            .OnComplete(() => WhiteImage.gameObject.SetActive(false));
     }
+
+    #endregion
+
 }
