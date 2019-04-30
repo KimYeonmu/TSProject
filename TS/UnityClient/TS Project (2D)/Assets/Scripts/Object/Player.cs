@@ -185,6 +185,8 @@ public class Player : MonoBehaviour
     public void PutCard(DeckTag putDeck, int playerCardIndex, bool isBack = false, float reverseTime = 0.5f)
     {
         var deck = DeckSystem.GetInstance().GetDeck(putDeck);
+        var putCardIdx = PlayerCard[playerCardIndex].GetCardIndex();
+        var putShapeIdx = PlayerCard[playerCardIndex].GetShapeIndex();
 
         PlayerCard[playerCardIndex].transform.DOMove(deck.GetPosition(), 0.5f);
         PlayerCard[playerCardIndex].transform.DORotate(deck.GetAngle(), 0.5f);
@@ -197,9 +199,8 @@ public class Player : MonoBehaviour
 
         deck.AddCard(PlayerCard[playerCardIndex]);
 
-        RuleSystem.GetInstance().AddAttackCardDamage(
-            PlayerCard[playerCardIndex].GetCardIndex(),
-            PlayerCard[playerCardIndex].GetShapeIndex());
+        RuleSystem.GetInstance().AddAttackCardDamage(putCardIdx, putShapeIdx);
+        AlertSystem.GetInstance().AddAlerts(putCardIdx, putShapeIdx);
 
         if (PlayerCard[playerCardIndex].GetCardIndex() != CardTag.K)
             IsPutCard = true;

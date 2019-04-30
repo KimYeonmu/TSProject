@@ -32,6 +32,9 @@ public class Deck : IObject
 
     public Card GetTopCard()
     {
+        if (DeckList.Count <= 0)
+            return null;
+
         Card card = DeckList[DeckList.Count - 1];
         DeckList.RemoveAt(DeckList.Count - 1);
         return card;
@@ -39,6 +42,9 @@ public class Deck : IObject
 
     public Card GetTopCardPeek()
     {
+        if (DeckList.Count <= 0)
+            return null;
+
         return DeckList[DeckList.Count - 1];
     }
 

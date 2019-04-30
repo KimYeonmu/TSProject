@@ -17,7 +17,7 @@ public class Alert : IObject
         base.Awake();
         gameObject.name = "Alert";
 
-        AlertRenderer = gameObject.AddComponent<SpriteRenderer>();
+        AlertRenderer = GetComponent<SpriteRenderer>();
         AlertRenderer.sortingLayerName = "Alert";
     }
 

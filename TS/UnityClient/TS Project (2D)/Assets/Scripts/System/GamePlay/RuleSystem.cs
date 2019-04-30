@@ -25,7 +25,7 @@ public class RuleSystem : SingletonBase<RuleSystem>
                     TurnSystem.GetInstance().ReverseTurn();
 
                 if (putCardIndex == CardTag.J)
-                    TurnSystem.GetInstance().JumpTurn();
+                    TurnSystem.GetInstance().JumpTurn(2);
 
                 return true;
             }
@@ -55,7 +55,7 @@ public class RuleSystem : SingletonBase<RuleSystem>
                     TurnSystem.GetInstance().ReverseTurn();
                 
                 if (putCardIndex == CardTag.J)
-                    TurnSystem.GetInstance().JumpTurn();
+                    TurnSystem.GetInstance().JumpTurn(1);
 
                 return true;
             }

@@ -129,7 +129,7 @@ public class NetworkSystem : SingletonBase<NetworkSystem>
         else if (text[0].Equals("PUT-CARD"))
         {
             int playerCardIndex = Convert.ToInt32(text[2]);
-            PlayerSystem.GetInstance().PlayerPutCard(DeckTag.PUT_DECK,text[1],playerCardIndex, 0.5f);
+            //PlayerSystem.GetInstance().PlayerPutCard(DeckTag.PUT_DECK,text[1],playerCardIndex, 0.5f);
         }
         else if (text[0].Equals("NEXT-TURN"))
         {

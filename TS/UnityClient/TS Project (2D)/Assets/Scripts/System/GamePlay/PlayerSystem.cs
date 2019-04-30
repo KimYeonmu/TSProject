@@ -31,9 +31,19 @@ public class PlayerSystem : SingletonBase<PlayerSystem>
         Players.Add(player);
     }
 
-    public void RemovePlayer(int playerIdx)
+    /// <summary>플레이어 제거 </summary>
+    /// <param name="id">플레이어 id</param>
+    public void RemovePlayer(string id)
     {
-        Players.RemoveAt(playerIdx);
+        var idx = Players.FindIndex(p => p.PlayerId == id);
+
+        if (idx < 0)
+        {
+            Debug.Log("Not Found player");
+            return;
+        }
+            
+        Players.RemoveAt(idx);
     }
 
     /// <summary>해당 id를 가진 플레이어에게 카드 추가 </summary>
@@ -48,13 +58,16 @@ public class PlayerSystem : SingletonBase<PlayerSystem>
             {
                 var player = Players.Find(p =>p.PlayerId == playerId);
 
-                var card = DeckSystem.GetInstance().GetTopCardWithDeck(deckTag);
-
                 if (player == null)
                 {
                     Debug.Log("Player not found : " + playerId);
                     return;
                 }
+
+                var card = DeckSystem.GetInstance().GetTopCardWithDeck(deckTag);
+
+                if (card == null)
+                    return;
 
                 if (player.PlayerId == MyPlayerId)
                     CardAnimationSystem.GetInstance().ReverseAnimation(card, 0.5f);
@@ -94,13 +107,12 @@ public class PlayerSystem : SingletonBase<PlayerSystem>
     /// <param name="deckTag">카드를 놓을 덱</param>
     /// <param name="playerName">플레이어 id</param>
     /// <param name="cardListIndex">플레이어의 카드 index</param>
-    /// <param name="reverseTime"></param>
-    public void PlayerPutCard(DeckTag deckTag, string playerId, int cardListIndex, float reverseTime = 0.5f)
+    /// <param name="isBack">뒤집을지</param>
+    /// <param name="reverseTime">뒤집는 duration</param>
+    public void PlayerPutCard(DeckTag deckTag, string playerId, int cardListIndex, bool isBack = false, float reverseTime = 0.5f)
     {
         var player = Players.Find(p => p.PlayerId == playerId);
-
-        AlertSystem.GetInstance().AddAlerts(player.PlayerCard[cardListIndex]);
-        player.PutCard(deckTag,cardListIndex,false,reverseTime);
+        player.PutCard(deckTag,cardListIndex,isBack,reverseTime);
     }
 
     /// <summary>플레이어의 모든 카드를 뒤집음 </summary>
@@ -178,5 +190,10 @@ public class PlayerSystem : SingletonBase<PlayerSystem>
         }
 
         return -1;
+    }
+
+    public Player GetPlayer(string id)
+    {
+        return Players.Find(p => p.PlayerId == id);
     }
 }

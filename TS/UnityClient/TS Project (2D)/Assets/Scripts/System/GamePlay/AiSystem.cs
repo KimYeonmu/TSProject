@@ -17,15 +17,14 @@ public class AiSystem : SingletonBase<AiSystem>
         {
             if (value)
             {
-                var playerIndex = TurnSystem.GetInstance().GetNowTurnPlayerIndex();
                 var cardIndex = 0;
+                var playerId = TurnSystem.GetInstance().PlayerNowTurn.Value;
 
                 Observable.Interval(TimeSpan.FromSeconds(0.5f))
-                    .TakeWhile(_=> RandomCard(playerIndex, ref cardIndex) >= 0)
+                    .TakeWhile(_=> RandomCard(playerId, ref cardIndex) >= 0)
                     .Subscribe(i =>
                     {
-                        var player = PlayerSystem.GetInstance().Players[playerIndex];
-                        player.PutCard(DeckTag.PUT_DECK,cardIndex,true);
+                        PlayerSystem.GetInstance().PlayerPutCard(DeckTag.PUT_DECK, playerId, cardIndex, true);
                     },
                     () =>
                     {
@@ -43,15 +42,13 @@ public class AiSystem : SingletonBase<AiSystem>
 
     }
 
-    public int RandomCard(int playerIndex, ref int cardIndex)
+    public int RandomCard(string playerId, ref int cardIndex)
     {
-        var player = PlayerSystem.GetInstance().Players[playerIndex];
+        var player = PlayerSystem.GetInstance().GetPlayer(playerId);
 
         var cardIndexs = new List<int>();
 
         var card = DeckSystem.GetInstance().GetTopCardPeekWithDeck(DeckTag.PUT_DECK);
-
-        //Debug.Log("Deck Card : " + card.GetCardIndex() + " shape : " + card.GetShapeIndex());
 
         for (int i = 0; i < player.PlayerCard.Count; i++)
         {
@@ -60,13 +57,10 @@ public class AiSystem : SingletonBase<AiSystem>
                 player.PlayerCard[i],
                 player.IsPutCard))
             {
-                //Debug.Log("compare d: " + card.GetCardIndex() + card.GetShapeIndex());
-                //Debug.Log("compare p: " + player.PlayerCard[i].GetCardIndex() + player.PlayerCard[i].GetShapeIndex());
                 cardIndexs.Add(i);
             }
         }
 
-        //Debug.Log("Card Index : " + cardIndexs.Count);
 
         if (cardIndexs.Count <= 0)
             return -1;
@@ -75,7 +69,6 @@ public class AiSystem : SingletonBase<AiSystem>
 
         var randIndex = rand.Next(0, cardIndexs.Count - 1);
 
-        //Debug.Log("Put card : " + player.PlayerCard[randIndex].GetCardIndex() + " " + player.PlayerCard[randIndex].GetShapeIndex());
         cardIndex = cardIndexs[randIndex];
 
         return 1;

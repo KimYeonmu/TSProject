@@ -34,7 +34,6 @@ public class TurnSystem : SingletonBase<TurnSystem>
 
         IsShowTimeBar.Subscribe(value =>
         {
-            //PlayerTurn.Reverse();
             if (value)
             {
                 TimeBackObject.CrossFadeAlpha(0.6f, 2, false);
@@ -92,9 +91,7 @@ public class TurnSystem : SingletonBase<TurnSystem>
             if (playerName == PlayerTurn.Peek())
             {
                 PlayerTurn.Dequeue();
-
-                if (PlayerNowTurn.Value == playerName)
-                    PlayerNowTurn.Value = PlayerTurn.Peek();
+                PlayerNowTurn.Value = PlayerTurn.Peek();
             }
 
             PlayerTurn.Enqueue(PlayerTurn.Dequeue());
@@ -121,32 +118,36 @@ public class TurnSystem : SingletonBase<TurnSystem>
     /// <summary>현재 턴을 종료하는 함수 </summary>
     public void EndTurn()
     {
+        var str = "prev";
+        foreach (var turn in PlayerTurn)
+            str += turn + " -> ";
+
+        Debug.Log(str);
+
         PlayerTurn.Enqueue(PlayerTurn.Dequeue());
+
+        var str2 = "next";
+        foreach (var turn in PlayerTurn)
+            str2 += turn + " -> ";
+
+        Debug.Log(str2);
+
         TurnNowTime = 0;
         IsShowTimeBar.Value = false;
         IsFinishTurn.Value = true;
     }
 
     /// <summary>턴을 하나 건너뜀 </summary>
-    public void JumpTurn()
+    public void JumpTurn(int jumpNum)
     {
-        //PlayerTurn.Enqueue(PlayerTurn.Dequeue());
-
-        foreach (var turn in PlayerTurn)
-        {
-            Debug.Log(turn + " -> ");
-        }
+        for(int i = 0; i < jumpNum; i ++)
+            PlayerTurn.Enqueue(PlayerTurn.Dequeue());
     }
 
     /// <summary>턴을 반대로 바꿈 </summary>
     public void ReverseTurn()
     {
-        //PlayerTurn = new Queue<string>(PlayerTurn.Reverse());
-
-        foreach (var turn in PlayerTurn)
-        {
-            Debug.Log(turn + " -> ");
-        }
+        PlayerTurn = new Queue<string>(PlayerTurn.Reverse());
     }
 
     /// <summary>첫 번째 턴을 결정하는 함수 </summary>
