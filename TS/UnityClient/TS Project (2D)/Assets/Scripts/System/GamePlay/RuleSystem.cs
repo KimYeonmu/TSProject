@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+// TODO : ai가 Q, J를 비교할때 무조건 점프랑 reverse 되는거 수정
+
 public class RuleSystem : SingletonBase<RuleSystem>
 {
     public bool IsAttackTurn;
@@ -68,10 +70,10 @@ public class RuleSystem : SingletonBase<RuleSystem>
         return false;
     }
 
-    private bool CheckPutCardRule(CardTag deckCard, CardTag ruleCard, ShapeTag putCardShape, ShapeTag ruleShape1, ShapeTag ruleShape2)
+    private bool CheckPutCardRule(CardTag putCard, CardTag ruleCard, ShapeTag putCardShape, ShapeTag ruleShape1, ShapeTag ruleShape2)
     {
         if (!IsAttackTurn)
-            if (deckCard == ruleCard)
+            if (putCard == ruleCard)
                 if (putCardShape == ruleShape1 || putCardShape == ruleShape2)
                     return true;
 
@@ -101,6 +103,10 @@ public class RuleSystem : SingletonBase<RuleSystem>
                 return true;
 
             if (putCard == CardTag.A && deckShape == putShape)
+                return true;
+
+            if (CheckPutCardRule(putCard, CardTag.Joker, putShape, ShapeTag.Club, ShapeTag.Spade) ||
+                CheckPutCardRule(putCard, CardTag.JokerR, putShape, ShapeTag.Heart, ShapeTag.Diamond))
                 return true;
 
             return false;

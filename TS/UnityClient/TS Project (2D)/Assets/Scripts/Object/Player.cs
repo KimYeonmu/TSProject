@@ -21,6 +21,7 @@ public class Player : MonoBehaviour
     public bool IsHoldCard;
     public bool IsPutCard = false;
     public bool IsAi;
+    public bool IsOneCard;
 
     public int HoldCardNum;
     public int MaxCardNum;

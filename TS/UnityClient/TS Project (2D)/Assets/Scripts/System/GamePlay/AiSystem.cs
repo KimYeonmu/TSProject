@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using UniRx;
 using UnityEngine;
 using Random = System.Random;
@@ -15,13 +16,15 @@ public class AiSystem : SingletonBase<AiSystem>
     {
         IsStartAi.Subscribe(value =>
         {
+            
             if (value)
             {
+                Debug.Log("ai start");
                 var cardIndex = 0;
                 var playerId = TurnSystem.GetInstance().PlayerNowTurn.Value;
 
                 Observable.Interval(TimeSpan.FromSeconds(0.5f))
-                    .TakeWhile(_=> RandomCard(playerId, ref cardIndex) >= 0)
+                    .TakeWhile(_=>RandomCard(playerId, ref cardIndex) >= 0)
                     .Subscribe(i =>
                     {
                         PlayerSystem.GetInstance().PlayerPutCard(DeckTag.PUT_DECK, playerId, cardIndex, true);
@@ -57,13 +60,15 @@ public class AiSystem : SingletonBase<AiSystem>
                 player.PlayerCard[i],
                 player.IsPutCard))
             {
-                cardIndexs.Add(i);
+                //cardIndexs.Add(i);
             }
         }
 
-
         if (cardIndexs.Count <= 0)
+        {
+            Debug.Log("no card");
             return -1;
+        }
 
         var rand = new Random();
 

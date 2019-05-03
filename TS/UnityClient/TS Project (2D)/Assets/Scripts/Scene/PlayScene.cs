@@ -7,7 +7,9 @@ using UniRx.Triggers;
 using UnityEngine;
 using UnityEngine.Experimental.PlayerLoop;
 using UnityEngine.UI;
+using UnityEngine.Video;
 
+// TODO : ai 낼거없을 때 드로우 하는지 체크
 
 public class PlayScene : IScene
 {
@@ -99,7 +101,7 @@ public class PlayScene : IScene
                         if (GameManager.GetInstance().CheckWinPlayer())
                             return;
 
-                        GameManager.GetInstance().FillDecktoDeck(DeckTag.PUT_DECK, DeckTag.DRAW_DECK);
+                        GameManager.GetInstance().FillDecktoDeckofAttack(DeckTag.PUT_DECK, DeckTag.DRAW_DECK);
                     });
             }
         });
@@ -245,7 +247,28 @@ public class PlayScene : IScene
 
     public void OneCardBtnPress()
     {
+        var btn = OneCardBtnObject.GetComponent<Button>();
+        var myId = PlayerSystem.GetInstance().MyPlayerId;
 
+        btn.interactable = false;
+
+        
+        Observable.Timer(TimeSpan.FromSeconds(0.5f))
+            .Subscribe(_ => { btn.interactable = true; });
+
+
+        foreach (var player in PlayerSystem.GetInstance().Players)
+        {
+            if (player.PlayerCard.Count == 1)
+            {
+                GameManager.GetInstance().FillDecktoDeckofDraw(DeckTag.PUT_DECK, DeckTag.DRAW_DECK, 1);
+                PlayerSystem.GetInstance().PlayerAddCardWithDeck(DeckTag.DRAW_DECK, player.PlayerId, 1);
+                return;
+            }
+        }
+
+        GameManager.GetInstance().FillDecktoDeckofDraw(DeckTag.PUT_DECK, DeckTag.DRAW_DECK, 1);
+        PlayerSystem.GetInstance().PlayerAddCardWithDeck(DeckTag.DRAW_DECK, myId, 1);
     }
 
     public void MenuBtnPress()

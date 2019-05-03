@@ -28,7 +28,7 @@ public class GameManager : SingletonBase<GameManager>
 
         yield return new WaitForSeconds(PlayerSystem.GetInstance().Players.Count * 1);
 
-        DeckSystem.GetInstance().MoveCardDecktoDeck(DeckTag.DRAW_DECK, DeckTag.PUT_DECK,3, 1, 0, 0.5f);
+        DeckSystem.GetInstance().MoveCardDecktoDeck(DeckTag.DRAW_DECK, DeckTag.PUT_DECK, 3, 1, 0, 0.5f);
 
         yield return new WaitForSeconds(1);
 
@@ -90,11 +90,13 @@ public class GameManager : SingletonBase<GameManager>
     /// <summary>deck1의 카드가 부족할 때 deck2의 카드로 채우고 섞음 </summary>
     /// <param name="deck1"></param>
     /// <param name="deck2"></param>
-    public void FillDecktoDeck(DeckTag deck1, DeckTag deck2)
+    public void FillDecktoDeckofAttack(DeckTag deck1, DeckTag deck2)
     {
         var nowTurn = TurnSystem.GetInstance().GetNowTurnPlayerIndex();
         var isPut = PlayerSystem.GetInstance().Players[nowTurn].IsPutCard;
         var damage = RuleSystem.GetInstance().GetAttackDamage(isPut);
+
+        var deck2Count = DeckSystem.GetInstance().GetCardCountWithDeck(deck2);
 
         Action addCardAction = () =>
         {
@@ -102,9 +104,13 @@ public class GameManager : SingletonBase<GameManager>
             NextTurn(nowTurn, damage);
         };
 
-        if (damage > DeckSystem.GetInstance().GetCardCountWithDeck(deck2))
+
+        if (damage > deck2Count)
         {
             var count = DeckSystem.GetInstance().GetCardCountWithDeck(deck1);
+
+            if (count + deck2Count <= damage)
+                return;
 
             Debug.Log("move put -> draw : " + count);
 
@@ -121,6 +127,31 @@ public class GameManager : SingletonBase<GameManager>
         else
         {
             NextTurn(nowTurn, damage);
+        }
+    }
+
+    public void FillDecktoDeckofDraw(DeckTag deck1, DeckTag deck2, int damage)
+    {
+        Action addCardAction = () =>
+        {
+            DeckSystem.GetInstance().ShuffleDeck(DeckTag.DRAW_DECK, 1000);
+        };
+
+        var count = DeckSystem.GetInstance().GetCardCountWithDeck(deck1);
+
+        if (damage > count)
+        {
+            Debug.Log("move put -> draw : " + count);
+
+            DeckSystem.GetInstance().MoveCardDecktoDeck(
+                deck1,
+                deck2,
+                0,
+                0,
+                count - 1,
+                0,
+                0.2f,
+                addCardAction);
         }
     }
 

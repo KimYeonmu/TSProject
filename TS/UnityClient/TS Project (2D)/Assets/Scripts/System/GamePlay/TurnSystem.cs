@@ -118,20 +118,9 @@ public class TurnSystem : SingletonBase<TurnSystem>
     /// <summary>현재 턴을 종료하는 함수 </summary>
     public void EndTurn()
     {
-        var str = "prev";
-        foreach (var turn in PlayerTurn)
-            str += turn + " -> ";
-
-        Debug.Log(str);
-
+        DebugingTurn();
         PlayerTurn.Enqueue(PlayerTurn.Dequeue());
-
-        var str2 = "next";
-        foreach (var turn in PlayerTurn)
-            str2 += turn + " -> ";
-
-        Debug.Log(str2);
-
+        DebugingTurn();
         TurnNowTime = 0;
         IsShowTimeBar.Value = false;
         IsFinishTurn.Value = true;
@@ -140,13 +129,15 @@ public class TurnSystem : SingletonBase<TurnSystem>
     /// <summary>턴을 하나 건너뜀 </summary>
     public void JumpTurn(int jumpNum)
     {
-        for(int i = 0; i < jumpNum; i ++)
+        Debug.Log("jump turn");
+        for (int i = 0; i < jumpNum; i ++)
             PlayerTurn.Enqueue(PlayerTurn.Dequeue());
     }
 
     /// <summary>턴을 반대로 바꿈 </summary>
     public void ReverseTurn()
     {
+        Debug.Log("revrese turn");
         PlayerTurn = new Queue<string>(PlayerTurn.Reverse());
     }
 
@@ -217,6 +208,16 @@ public class TurnSystem : SingletonBase<TurnSystem>
                 EndTurn();
             }
         }
+    }
+
+    private void DebugingTurn()
+    {
+        string str = "";
+        foreach (var turn in PlayerTurn)
+        {
+            str += turn + " -> ";
+        }
+        Debug.Log(str);
     }
 }
 
