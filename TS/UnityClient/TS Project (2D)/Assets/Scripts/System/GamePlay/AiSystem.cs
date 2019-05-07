@@ -10,39 +10,47 @@ using Random = System.Random;
 public class AiSystem : SingletonBase<AiSystem>
 {
     public BoolReactiveProperty IsStartAi = new BoolReactiveProperty(false);
-    
+
     // Start is called before the first frame update
     void Start()
     {
-        IsStartAi.Subscribe(value =>
-        {
-            
-            if (value)
-            {
-                Debug.Log("ai start");
-                var cardIndex = 0;
-                var playerId = TurnSystem.GetInstance().PlayerNowTurn.Value;
-
-                Observable.Interval(TimeSpan.FromSeconds(0.5f))
-                    .TakeWhile(_=>RandomCard(playerId, ref cardIndex) >= 0)
-                    .Subscribe(i =>
-                    {
-                        PlayerSystem.GetInstance().PlayerPutCard(DeckTag.PUT_DECK, playerId, cardIndex, true);
-                    },
-                    () =>
-                    {
-                        IsStartAi.Value = false;
-                        TurnSystem.GetInstance().EndTurn();
-                    });
-            }
-
-        });
+        
     }
 
     // Update is called once per frame
     void Update()
     {
 
+    }
+
+    public void SetupOneCardAi()
+    {
+        IsStartAi.Subscribe(value =>
+        {
+            if (value)
+            {
+                Debug.Log("ai start");
+                var cardIndex = 0;
+                var playerId = TurnSystem.GetInstance().PlayerNowTurn.Value;
+                var isPut = PlayerSystem.GetInstance().GetPlayerIsPutCard(playerId);
+
+                Observable.Interval(TimeSpan.FromSeconds(0.5f))
+                    .TakeWhile(_ => RandomCard(playerId, ref cardIndex) >= 0)
+                    .Subscribe(i =>
+                        {
+                            var card = PlayerSystem.GetInstance().GetPlayerCard(playerId, cardIndex);
+
+                            RuleSystem.GetInstance().CheckSpecialCard(card, isPut);
+
+                            PlayerSystem.GetInstance().PlayerPutCard(DeckTag.PUT_DECK, playerId, cardIndex, true);
+                        },
+                        () =>
+                        {
+                            IsStartAi.Value = false;
+                            TurnSystem.GetInstance().EndTurn();
+                        });
+            }
+        });
     }
 
     public int RandomCard(string playerId, ref int cardIndex)
@@ -60,7 +68,7 @@ public class AiSystem : SingletonBase<AiSystem>
                 player.PlayerCard[i],
                 player.IsPutCard))
             {
-                //cardIndexs.Add(i);
+                cardIndexs.Add(i);
             }
         }
 

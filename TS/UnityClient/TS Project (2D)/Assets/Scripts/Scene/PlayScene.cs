@@ -45,10 +45,12 @@ public class PlayScene : IScene
 
         CardSystem.GetInstance().AllCardMoveDeck(DeckSystem.GetInstance().GetDeck(DeckTag.ANIMATION_RIGHT_DECK));
 
+        AiSystem.GetInstance().SetupOneCardAi();
+
         if (PlayerSystem.GetInstance().Players.Count <= 0)
         {
-            PlayerSystem.GetInstance().MyPlayerId = "1";
-            PlayerSystem.GetInstance().AddPlayer(PlayerTag.PLAYER_BOTTOM, "1", false);
+            //PlayerSystem.GetInstance().MyPlayerId = "1";
+            PlayerSystem.GetInstance().AddPlayer(PlayerTag.PLAYER_BOTTOM, "1", true);
             PlayerSystem.GetInstance().AddPlayer(PlayerTag.PLAYER_LEFT_DOWN, "3", true);
             PlayerSystem.GetInstance().AddPlayer(PlayerTag.PLAYER_TOP, "2", true);
             PlayerSystem.GetInstance().AddPlayer(PlayerTag.PLAYER_RIGHT_UP, "4", true);
@@ -58,7 +60,7 @@ public class PlayScene : IScene
             TurnSystem.GetInstance().AddTurnPlayer("3");
             TurnSystem.GetInstance().AddTurnPlayer("4");
 
-            TurnSystem.GetInstance().SetFirstTurn("1");
+            
             //NetworkSystem.GetInstance().SendServer("FIND-ROOM:" + "1");
         }
 
@@ -73,11 +75,14 @@ public class PlayScene : IScene
                 var nowId = TurnSystem.GetInstance().PlayerNowTurn.Value;
 
                 if (nowId == PlayerSystem.GetInstance().MyPlayerId)
-                    TouchUpdate();
+                    InputSystem.GetInstance().TouchUpdate();
             });
 
         TurnSystem.GetInstance().PlayerNowTurn.Subscribe(name =>
         {
+            if (name == "")
+                return;
+
             if (PlayerSystem.GetInstance().GetPlayer(name).IsAi)
                 AiSystem.GetInstance().IsStartAi.Value = true;
 
@@ -105,62 +110,6 @@ public class PlayScene : IScene
                     });
             }
         });
-    }
-
-    public void TouchUpdate()
-    {
-        if (PlayerSystem.GetInstance().Players.Count <= 0)
-            return;
-
-        Vector2 pos = Vector2.zero;
-        var myPlayerIdx = PlayerSystem.GetInstance().GetMyPlayerIndex();
-
-        if (myPlayerIdx < 0)
-            return;
-
-        //int myPlayerIndex = PlayerSystem.GetInstance().MyPlayerIndex;
-
-        //for (int i = 0; i < Input.touchCount; i++)
-        //{
-        //    Touch touch = Input.GetTouch(i);
-
-        //    pos = Camera.main.ScreenToWorldPoint(touch.position);
-
-        //    if (touch.phase == TouchPhase.Began)
-        //    {
-        //        _players[MyPlayerIndex].SelectCard_Began(pos);
-        //        Debug.Log("begin");
-        //    }
-
-        //    else if (touch.phase == TouchPhase.Moved)
-        //    {
-        //        _players[MyPlayerIndex].SelectCard_Moved(pos);
-        //        Debug.Log("moved");
-        //    }
-
-        //    else if (touch.phase == TouchPhase.Ended)
-        //    {
-        //        _players[MyPlayerIndex].SelectCard_Ended();
-        //        Debug.Log("end");
-        //    }
-        //}
-
-        pos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-
-        if (Input.GetMouseButtonDown(0))
-        {
-            PlayerSystem.GetInstance().Players[myPlayerIdx].SelectCard_Began(pos);
-        }
-
-        if (Input.GetMouseButton(0))
-        {
-            PlayerSystem.GetInstance().Players[myPlayerIdx].SelectCard_Moved(pos);
-        }
-
-        if (Input.GetMouseButtonUp(0))
-        {
-            PlayerSystem.GetInstance().Players[myPlayerIdx].SelectCard_Ended();
-        }
     }
 
     public IEnumerator StartScene()

@@ -38,6 +38,7 @@ public class GameManager : SingletonBase<GameManager>
 
         IsStartGame = true;
 
+        TurnSystem.GetInstance().SetFirstTurn("1");
         TurnSystem.GetInstance().StartTurn();
     }
 

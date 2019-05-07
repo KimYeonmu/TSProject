@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-// TODO : ai가 Q, J를 비교할때 무조건 점프랑 reverse 되는거 수정
-
 public class RuleSystem : SingletonBase<RuleSystem>
 {
     public bool IsAttackTurn;
@@ -23,12 +21,6 @@ public class RuleSystem : SingletonBase<RuleSystem>
             if (deckCardIndex == putCardIndex ||
                 deckCardIndex == CardTag.K && deckShape == putShape)
             {   
-                if (putCardIndex == CardTag.Q)
-                    TurnSystem.GetInstance().ReverseTurn();
-
-                if (putCardIndex == CardTag.J)
-                    TurnSystem.GetInstance().JumpTurn(2);
-
                 return true;
             }
 
@@ -53,12 +45,6 @@ public class RuleSystem : SingletonBase<RuleSystem>
         {
             if (deckShape == putShape || deckCardIndex == putCardIndex)
             {
-                if (putCardIndex == CardTag.Q)
-                    TurnSystem.GetInstance().ReverseTurn();
-                
-                if (putCardIndex == CardTag.J)
-                    TurnSystem.GetInstance().JumpTurn(1);
-
                 return true;
             }
 
@@ -87,7 +73,8 @@ public class RuleSystem : SingletonBase<RuleSystem>
 
         if (deckCard == CardTag.A)
         {
-            if (deckShape == ShapeTag.Spade && putCard == CardTag.Joker)
+            if (CheckPutCardRule(putCard, CardTag.Joker, putShape, ShapeTag.Club, ShapeTag.Spade) ||
+                CheckPutCardRule(putCard, CardTag.JokerR, putShape, ShapeTag.Heart, ShapeTag.Diamond))
                 return true;
 
             if (putCard == CardTag.A)
@@ -172,5 +159,29 @@ public class RuleSystem : SingletonBase<RuleSystem>
         return 0;
     }
 
+    public void CheckSpecialCard(CardTag card, bool isPutCard)
+    {
+        if (card == CardTag.Q)
+        {
+            TurnSystem.GetInstance().ReverseTurn();
+        }
+        else if (card == CardTag.J)
+        {
+            var jump = isPutCard ? 2 : 1;
+            TurnSystem.GetInstance().JumpTurn(jump);
+
+            if (TurnSystem.GetInstance().PlayerTurn.Peek() ==
+                TurnSystem.GetInstance().PlayerNowTurn.Value)
+            {
+                var playerId = TurnSystem.GetInstance().PlayerNowTurn.Value;
+                PlayerSystem.GetInstance().GetPlayer(playerId).IsPutCard = false;
+            }
+        }
+        else if (card == CardTag.K)
+        {
+            var playerId = TurnSystem.GetInstance().PlayerNowTurn.Value;
+            PlayerSystem.GetInstance().GetPlayer(playerId).IsPutCard = false;
+        }
+    }
 }
 

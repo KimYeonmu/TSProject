@@ -18,12 +18,11 @@ public enum PlayerTag
 public class Player : MonoBehaviour
 {
     public bool IsDie;
-    public bool IsHoldCard;
+    
     public bool IsPutCard = false;
     public bool IsAi;
     public bool IsOneCard;
-
-    public int HoldCardNum;
+    
     public int MaxCardNum;
 
     public PlayerTag PlayerPlace;
@@ -200,106 +199,18 @@ public class Player : MonoBehaviour
 
         deck.AddCard(PlayerCard[playerCardIndex]);
 
+        //////////////////////////////////////
+        /// TODO : 커플링으로 인해 분리해야함
         RuleSystem.GetInstance().AddAttackCardDamage(putCardIdx, putShapeIdx);
         AlertSystem.GetInstance().AddAlerts(putCardIdx, putShapeIdx);
-
-        if (PlayerCard[playerCardIndex].GetCardIndex() != CardTag.K)
-            IsPutCard = true;
+        //////////////////////////////////////
+        
+        IsPutCard = true;
 
         PlayerCard.RemoveAt(playerCardIndex);
 
         RePosition();
 
         NetworkSystem.GetInstance().SendServer(string.Format("PUT-CARD:{0}:{1}", PlayerId, playerCardIndex));
-    }
-
-    public void SelectCard_Began(Vector2 touchPos)
-    {
-        BoxCollider2D collider = null;
-
-        for (int i = PlayerCard.Count - 1; i >= 0; i--)
-        {
-            collider = PlayerCard[i].gameObject.GetComponent<BoxCollider2D>();
-
-            if (collider.OverlapPoint(touchPos))
-            {
-                PlayerCard[i].SetScale(Vector2.one * 1.2f);
-                PlayerCard[i].SetPosition(CardPositionList[i]);
-                break;
-            }
-        }
-    }
-
-    public void SelectCard_Moved(Vector2 touchPos)
-    {
-        BoxCollider2D collider2D;
-
-        Vector2 vc = touchPos;
-
-        if (IsHoldCard == true)
-        {
-            PlayerCard[HoldCardNum].SetPosition(vc + Vector2.down * 1.3f);
-            return;
-        }
-
-        for (int i = PlayerCard.Count - 1; i >= 0; i--)
-        {
-            collider2D = PlayerCard[i].gameObject.GetComponent<BoxCollider2D>();
-            
-            if (collider2D.OverlapPoint(touchPos))
-            {
-                PlayerCard[i].SetScale(Vector2.one * 1.2f);
-                PlayerCard[i].SetPosition(CardPositionList[i] - Vector2.up);
-
-                if (touchPos.y > -SceneSystem.GetInstance().ScreenWorldPoint.y / 1.3f)
-                {
-                    HoldCardNum = i;
-                    IsHoldCard = true;
-
-                    PlayerCard[HoldCardNum].transform.DOScale(Vector3.one, 0.5f);
-
-                    PlayerCard[i].SetPosition(vc + Vector2.down * 1.5f);
-                    PlayerCard[i].SetSortingOrder(100);
-                }
-
-                for (int j = 0; j < PlayerCard.Count; j++)
-                {
-                    if (i == j)
-                    {
-                        continue;
-                    }
-
-                    PlayerCard[j].SetScale(Vector2.one);
-                    PlayerCard[j].SetPosition(CardPositionList[j]);
-                }
-
-                break;
-            }
-        }
-    }
-
-    public void SelectCard_Ended()
-    {
-        if (IsHoldCard == true)
-        {
-            IsHoldCard = false;
-
-            var isCompare = RuleSystem.GetInstance().CompareCard(
-                DeckSystem.GetInstance().GetTopCardPeekWithDeck(DeckTag.PUT_DECK),
-                PlayerCard[HoldCardNum],
-                IsPutCard);
-
-            if (PlayerCard[HoldCardNum].GetPosition().y < -SceneSystem.GetInstance().ScreenSize.y * 0.4f ||
-                !isCompare)
-            {
-                RePosition();
-                ReScale();
-            }
-            else
-            {
-                PlayerCard[HoldCardNum].SetSortingOrder(HoldCardNum + 1);
-                PutCard(DeckTag.PUT_DECK,HoldCardNum);
-            }
-        }
     }
 }

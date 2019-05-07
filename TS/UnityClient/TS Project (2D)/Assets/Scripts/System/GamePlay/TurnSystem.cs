@@ -17,7 +17,8 @@ public class TurnSystem : SingletonBase<TurnSystem>
     public float TurnTimeOut = 30;
     public float TurnNowTime;
     public float TurnShowTime = 7;
-    public StringReactiveProperty PlayerNowTurn;
+
+    public StringReactiveProperty PlayerNowTurn = new StringReactiveProperty();
     public BoolReactiveProperty IsShowTimeBar = new BoolReactiveProperty(false);
     public BoolReactiveProperty IsFinishTurn = new BoolReactiveProperty(false);
 
@@ -109,6 +110,7 @@ public class TurnSystem : SingletonBase<TurnSystem>
     /// <summary>다음 턴으로 넘기는 함수 </summary>
     public void NextTurn()
     {
+        Debug.Log("next turn");
         PlayerNowTurn.Value = PlayerTurn.Peek();
         TurnNowTime = TurnTimeOut;
         IsFinishTurn.Value = false;

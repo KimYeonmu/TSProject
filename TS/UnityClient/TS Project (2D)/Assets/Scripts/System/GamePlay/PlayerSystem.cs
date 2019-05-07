@@ -120,7 +120,8 @@ public class PlayerSystem : SingletonBase<PlayerSystem>
     /// <param name="reverseTime">뒤집는 애니메이션 지속시간</param>
     public void PlayerCardReverse(int playerIndex, float reverseTime)
     {
-        Players[playerIndex].AllCardReverse(reverseTime);
+        if (playerIndex >= 0)
+            Players[playerIndex].AllCardReverse(reverseTime);
     }
 
     public void AllPlayerCardReverse(float reverseTime)
@@ -153,6 +154,9 @@ public class PlayerSystem : SingletonBase<PlayerSystem>
         WaitForSeconds delay = new WaitForSeconds(shareDelay);
 
         int tempTurn = TurnSystem.GetInstance().GetNowTurnPlayerIndex();
+
+        if (tempTurn < 0)
+            tempTurn = 0;
 
         for (int i = 0; i < Players.Count; i++)
         {
@@ -195,5 +199,15 @@ public class PlayerSystem : SingletonBase<PlayerSystem>
     public Player GetPlayer(string id)
     {
         return Players.Find(p => p.PlayerId == id);
+    }
+
+    public CardTag GetPlayerCard(string id, int cardIdx)
+    {
+        return Players.Find(p => p.PlayerId == id).PlayerCard[cardIdx].GetCardIndex();
+    }
+
+    public bool GetPlayerIsPutCard(string id)
+    {
+        return Players.Find(p => p.PlayerId == id).IsPutCard;
     }
 }
