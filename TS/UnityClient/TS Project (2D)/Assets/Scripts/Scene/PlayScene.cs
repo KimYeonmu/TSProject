@@ -9,8 +9,6 @@ using UnityEngine.Experimental.PlayerLoop;
 using UnityEngine.UI;
 using UnityEngine.Video;
 
-// TODO : ai 낼거없을 때 드로우 하는지 체크
-
 public class PlayScene : IScene
 {
     public GameObject TurnEndBtnObject;
@@ -49,8 +47,8 @@ public class PlayScene : IScene
 
         if (PlayerSystem.GetInstance().Players.Count <= 0)
         {
-            //PlayerSystem.GetInstance().MyPlayerId = "1";
-            PlayerSystem.GetInstance().AddPlayer(PlayerTag.PLAYER_BOTTOM, "1", true);
+            PlayerSystem.GetInstance().MyPlayerId = "1";
+            PlayerSystem.GetInstance().AddPlayer(PlayerTag.PLAYER_BOTTOM, "1", false);
             PlayerSystem.GetInstance().AddPlayer(PlayerTag.PLAYER_LEFT_DOWN, "3", true);
             PlayerSystem.GetInstance().AddPlayer(PlayerTag.PLAYER_TOP, "2", true);
             PlayerSystem.GetInstance().AddPlayer(PlayerTag.PLAYER_RIGHT_UP, "4", true);
@@ -60,7 +58,7 @@ public class PlayScene : IScene
             TurnSystem.GetInstance().AddTurnPlayer("3");
             TurnSystem.GetInstance().AddTurnPlayer("4");
 
-            
+
             //NetworkSystem.GetInstance().SendServer("FIND-ROOM:" + "1");
         }
 
@@ -201,7 +199,7 @@ public class PlayScene : IScene
 
         btn.interactable = false;
 
-        
+
         Observable.Timer(TimeSpan.FromSeconds(0.5f))
             .Subscribe(_ => { btn.interactable = true; });
 

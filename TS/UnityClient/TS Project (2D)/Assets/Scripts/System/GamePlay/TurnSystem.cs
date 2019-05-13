@@ -25,8 +25,8 @@ public class TurnSystem : SingletonBase<TurnSystem>
     public Image TimeObject;
     public Image TimeBackObject;
 
-
     public bool IsStartTurn;
+    public bool IsJumpTurn;
 
     public void Start()
     {
@@ -111,7 +111,8 @@ public class TurnSystem : SingletonBase<TurnSystem>
     public void NextTurn()
     {
         Debug.Log("next turn");
-        PlayerNowTurn.Value = PlayerTurn.Peek();
+        PlayerNowTurn.SetValueAndForceNotify(PlayerTurn.Peek());
+        //PlayerNowTurn.Value = PlayerTurn.Peek();
         TurnNowTime = TurnTimeOut;
         IsFinishTurn.Value = false;
         NetworkSystem.GetInstance().SendServer("NEXT-TURN");
@@ -121,16 +122,22 @@ public class TurnSystem : SingletonBase<TurnSystem>
     public void EndTurn()
     {
         DebugingTurn();
-        PlayerTurn.Enqueue(PlayerTurn.Dequeue());
+
+        if (!IsJumpTurn || PlayerNowTurn.Value == PlayerTurn.Peek())
+            PlayerTurn.Enqueue(PlayerTurn.Dequeue());
+
         DebugingTurn();
+
         TurnNowTime = 0;
         IsShowTimeBar.Value = false;
         IsFinishTurn.Value = true;
+        IsJumpTurn = false;
     }
 
     /// <summary>턴을 하나 건너뜀 </summary>
     public void JumpTurn(int jumpNum)
     {
+        IsJumpTurn = true;
         Debug.Log("jump turn");
         for (int i = 0; i < jumpNum; i ++)
             PlayerTurn.Enqueue(PlayerTurn.Dequeue());

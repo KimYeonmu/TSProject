@@ -40,9 +40,9 @@ public class AiSystem : SingletonBase<AiSystem>
                         {
                             var card = PlayerSystem.GetInstance().GetPlayerCard(playerId, cardIndex);
 
-                            RuleSystem.GetInstance().CheckSpecialCard(card, isPut);
-
                             PlayerSystem.GetInstance().PlayerPutCard(DeckTag.PUT_DECK, playerId, cardIndex, true);
+
+                            RuleSystem.GetInstance().CheckSpecialCard(card, isPut);
                         },
                         () =>
                         {

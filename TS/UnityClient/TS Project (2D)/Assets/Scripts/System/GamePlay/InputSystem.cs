@@ -163,13 +163,13 @@ public class InputSystem : SingletonBase<InputSystem>
             {
                 _myCardList[HoldCardNum].SetSortingOrder(HoldCardNum + 1);
 
-                RuleSystem.GetInstance().CheckSpecialCard(
-                    _myCardList[HoldCardNum].GetCardIndex(),
-                    isPut);
-
                 PlayerSystem.GetInstance().PlayerPutCard(DeckTag.PUT_DECK, 
                     PlayerSystem.GetInstance().MyPlayerId,
                     HoldCardNum);
+
+                RuleSystem.GetInstance().CheckSpecialCard(
+                    _myCardList[HoldCardNum].GetCardIndex(),
+                    isPut);
             }
         }
     }
